@@ -4,6 +4,7 @@ import Requests from "./components/Requests";
 import HRForm from "./components/HRForm";
 import Employees from "./components/Employees";
 import FromHome from "./components/FromHome";
+import Profile from "./components/Profile";
 import Layout from "./components/Layout";
 import Missing from "./components/Missing";
 import Unauthorized from "./components/Unauthorized";
@@ -13,6 +14,7 @@ import { Routes, Route } from "react-router-dom";
 
 const roles = {
   admin: "admin",
+  teamleader: "teamleader",
   user: "user",
 };
 
@@ -29,14 +31,23 @@ function App() {
         <Route element={<PersistLogin />}>
           {/* Routes accessible by both admin and user */}
           <Route
-            element={<RequireAuth allowedRoles={[roles.admin, roles.user]} />}
+            element={
+              <RequireAuth
+                allowedRoles={[roles.admin, roles.teamleader, roles.user]}
+              />
+            }
           >
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/requests" element={<Requests />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
 
           {/* Admin-only routes */}
-          <Route element={<RequireAuth allowedRoles={[roles.admin]} />}>
+          <Route
+            element={
+              <RequireAuth allowedRoles={[roles.admin, roles.teamleader]} />
+            }
+          >
             <Route path="/hr-form" element={<HRForm />} />
             <Route path="/add-employee" element={<Employees />} />
             <Route path="/add-from-home" element={<FromHome />} />

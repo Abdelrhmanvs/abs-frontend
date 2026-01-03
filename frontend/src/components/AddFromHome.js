@@ -319,20 +319,12 @@ const AddFromHome = () => {
   };
 
   return (
-    <div
-      style={{
-        marginLeft: "235px",
-        marginTop: "65px",
-        minHeight: "calc(100vh - 65px)",
-        background: "#1a1a1a",
-        padding: "2rem",
-      }}
-    >
+    <div>
       {/* Header Section */}
       <div style={{ marginBottom: "2rem" }}>
         <div
+          className="flex-responsive"
           style={{
-            display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
           }}
@@ -989,8 +981,6 @@ const AddFromHome = () => {
                               e.target.value
                             )
                           }
-                          min={weekRange.start}
-                          max={weekRange.end}
                           placeholder="Start Date"
                           style={{
                             width: "100%",
@@ -1041,8 +1031,7 @@ const AddFromHome = () => {
                               e.target.value
                             )
                           }
-                          min={range.startDate || weekRange.start}
-                          max={weekRange.end}
+                          min={range.startDate}
                           placeholder="End Date"
                           style={{
                             width: "100%",

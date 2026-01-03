@@ -104,6 +104,12 @@ const AddFromHome = () => {
   const handleDateRangeChange = (index, field, value) => {
     const newDateRanges = [...dateRanges];
     newDateRanges[index][field] = value;
+
+    // Auto-set end date to match start date when start date is selected
+    if (field === "startDate" && value) {
+      newDateRanges[index].endDate = value;
+    }
+
     setDateRanges(newDateRanges);
     setError("");
   };
@@ -321,93 +327,149 @@ const AddFromHome = () => {
   return (
     <div
       style={{
-        marginLeft: "235px",
-        marginTop: "65px",
-        minHeight: "calc(100vh - 65px)",
-        background: "#1a1a1a",
+        minHeight: "100vh",
+        background: "#2D2D31",
         padding: "2rem",
       }}
     >
-      {/* Header Section */}
-      <div style={{ marginBottom: "2rem" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <h1
-              style={{
-                fontSize: "1.875rem",
-                fontWeight: "bold",
-                color: "#ffffff",
-                marginBottom: "0.5rem",
-              }}
-            >
-              Employees Working From Home
-            </h1>
-            <p style={{ color: "#9ca3af", fontSize: "0.875rem" }}>
-              Current week work from home employees
-            </p>
-          </div>
-          <button
-            onClick={() => setShowModal(true)}
-            style={{
-              background: "#f97316",
-              color: "#ffffff",
-              padding: "0.75rem 1.5rem",
-              borderRadius: "0.5rem",
-              border: "none",
-              fontSize: "0.875rem",
-              fontWeight: "600",
-              cursor: "pointer",
-              transition: "background 0.2s",
-            }}
-            onMouseEnter={(e) => (e.target.style.background = "#ea580c")}
-            onMouseLeave={(e) => (e.target.style.background = "#f97316")}
-          >
-            + Add WFH
-          </button>
-        </div>
-      </div>
-
       {/* Success Message */}
       {success && (
         <div
+          className="animate-slideDown"
           style={{
-            background: "rgba(34, 197, 94, 0.1)",
-            border: "1px solid #22c55e",
-            color: "#22c55e",
-            padding: "0.75rem 1rem",
-            borderRadius: "0.5rem",
+            background: "rgba(16, 185, 129, 0.1)",
+            border: "1px solid rgba(16, 185, 129, 0.3)",
+            color: "#10b981",
+            padding: "1rem 1.25rem",
+            borderRadius: "12px",
             marginBottom: "1.5rem",
             fontSize: "0.875rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.75rem",
           }}
         >
+          <i className="fas fa-check-circle"></i>
           {success}
         </div>
       )}
 
       {/* WFH Requests Table */}
       <div
+        className="animate-fadeInUp hover-lift"
         style={{
-          background: "#2d2d2d",
-          borderRadius: "0.75rem",
+          background: "#1E1E1E",
+          borderRadius: "16px",
           overflow: "hidden",
+          border: "1px solid rgba(255, 255, 255, 0.06)",
         }}
       >
+        {/* Table Header with Title and Add Button */}
+        <div
+          style={{
+            padding: "1.5rem",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "1rem",
+          }}
+        >
+          <div>
+            <h1
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: "700",
+                color: "#FFFFFF",
+                marginBottom: "0.25rem",
+                letterSpacing: "-0.025em",
+              }}
+            >
+              Employees Working From Home
+            </h1>
+            <p
+              style={{
+                color: "rgba(255, 255, 255, 0.5)",
+                fontSize: "0.8125rem",
+                margin: 0,
+              }}
+            >
+              Current week work from home employees
+            </p>
+          </div>
+          <button
+            onClick={() => setShowModal(true)}
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)",
+              backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)",
+              color: "#FFFFFF",
+              padding: "0.75rem 1.5rem",
+              borderRadius: "12px",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              fontSize: "0.875rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              boxShadow:
+                "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, rgba(234, 131, 3, 1) 0%, rgba(234, 131, 3, 0.85) 100%)";
+              e.currentTarget.style.boxShadow =
+                "0 6px 20px rgba(234, 131, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+              e.currentTarget.style.transform = "translateY(-2px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)";
+              e.currentTarget.style.boxShadow =
+                "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
+            <i className="fas fa-plus"></i>
+            Add WFH
+          </button>
+        </div>
+
         {wfhLoading ? (
           <div
-            style={{ padding: "3rem", textAlign: "center", color: "#9ca3af" }}
+            style={{
+              padding: "3rem",
+              textAlign: "center",
+              color: "rgba(255, 255, 255, 0.5)",
+            }}
           >
+            <i
+              className="fas fa-spinner fa-spin"
+              style={{ marginRight: "0.5rem" }}
+            ></i>
             Loading employees...
           </div>
         ) : wfhRequests.length === 0 ? (
           <div
-            style={{ padding: "3rem", textAlign: "center", color: "#9ca3af" }}
+            style={{
+              padding: "3rem",
+              textAlign: "center",
+              color: "rgba(255, 255, 255, 0.5)",
+            }}
           >
+            <i
+              className="fas fa-home"
+              style={{
+                fontSize: "2rem",
+                marginBottom: "1rem",
+                display: "block",
+                opacity: 0.3,
+              }}
+            ></i>
             No employees working from home this week
           </div>
         ) : (
@@ -415,18 +477,42 @@ const AddFromHome = () => {
             {/* Week Range Display */}
             <div
               style={{
-                padding: "1rem",
-                background: "#3a3a3a",
-                borderBottom: "1px solid #4a4a4a",
+                padding: "1rem 1.5rem",
+                background: "rgba(255, 255, 255, 0.02)",
+                borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
               }}
             >
-              <p style={{ color: "#9ca3af", fontSize: "0.875rem", margin: 0 }}>
-                Week:{" "}
+              <p
+                style={{
+                  color: "rgba(255, 255, 255, 0.7)",
+                  fontSize: "0.8125rem",
+                  margin: 0,
+                }}
+              >
+                {wfhRequests.length} employee
+                {wfhRequests.length !== 1 ? "s" : ""} with WFH this week
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  color: "rgba(255, 255, 255, 0.7)",
+                  fontSize: "0.8125rem",
+                }}
+              >
+                <i
+                  className="fas fa-calendar-week"
+                  style={{ color: "#EA8303" }}
+                ></i>
                 {weekRange.start &&
                   new Date(weekRange.start).toLocaleDateString()}{" "}
                 -{" "}
                 {weekRange.end && new Date(weekRange.end).toLocaleDateString()}
-              </p>
+              </div>
             </div>
 
             {/* Weekly Schedule Grid */}
@@ -439,17 +525,19 @@ const AddFromHome = () => {
                 }}
               >
                 <thead>
-                  <tr style={{ background: "#3a3a3a" }}>
+                  <tr style={{ background: "rgba(255, 255, 255, 0.02)" }}>
                     <th
                       style={{
-                        padding: "1rem",
+                        padding: "1rem 1.5rem",
                         textAlign: "left",
-                        color: "#ffffff",
+                        color: "rgba(255, 255, 255, 0.5)",
                         fontWeight: "600",
-                        fontSize: "0.875rem",
+                        fontSize: "0.75rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                         position: "sticky",
                         left: 0,
-                        background: "#3a3a3a",
+                        background: "#1E1E1E",
                         minWidth: "200px",
                         zIndex: 1,
                       }}
@@ -459,41 +547,50 @@ const AddFromHome = () => {
                     {weekDays.map((day) => {
                       const isFriday = day.dayShort === "Fri";
                       return (
-                      <th
-                        key={day.date}
-                        style={{
-                          padding: "1rem",
-                          textAlign: "center",
-                          color: isFriday ? "#ef4444" : "#ffffff",
-                          fontWeight: "600",
-                          fontSize: "0.875rem",
-                          minWidth: "100px",
-                          background: isFriday ? "rgba(239, 68, 68, 0.1)" : "transparent",
-                        }}
-                      >
-                        <div>{day.dayShort}</div>
-                        <div
+                        <th
+                          key={day.date}
                           style={{
+                            padding: "1rem",
+                            textAlign: "center",
+                            color: isFriday
+                              ? "#ef4444"
+                              : "rgba(255, 255, 255, 0.5)",
+                            fontWeight: "600",
                             fontSize: "0.75rem",
-                            color: isFriday ? "#ef4444" : "#9ca3af",
-                            fontWeight: "400",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.05em",
+                            minWidth: "100px",
+                            background: isFriday
+                              ? "rgba(239, 68, 68, 0.1)"
+                              : "transparent",
                           }}
                         >
-                          {new Date(day.date).getDate()}
-                        </div>
-                        {isFriday && (
+                          <div>{day.dayShort}</div>
                           <div
                             style={{
-                              fontSize: "0.625rem",
-                              color: "#ef4444",
-                              fontWeight: "600",
+                              fontSize: "0.875rem",
+                              color: isFriday
+                                ? "#ef4444"
+                                : "rgba(255, 255, 255, 0.7)",
+                              fontWeight: "500",
                               marginTop: "0.25rem",
                             }}
                           >
-                            Holiday
+                            {new Date(day.date).getDate()}
                           </div>
-                        )}
-                      </th>
+                          {isFriday && (
+                            <div
+                              style={{
+                                fontSize: "0.625rem",
+                                color: "#ef4444",
+                                fontWeight: "600",
+                                marginTop: "0.25rem",
+                              }}
+                            >
+                              Holiday
+                            </div>
+                          )}
+                        </th>
                       );
                     })}
                   </tr>
@@ -503,11 +600,12 @@ const AddFromHome = () => {
                     <tr
                       key={index}
                       style={{
-                        borderTop: "1px solid #3a3a3a",
+                        borderTop: "1px solid rgba(255, 255, 255, 0.06)",
                         transition: "background 0.2s",
                       }}
                       onMouseEnter={(e) =>
-                        (e.currentTarget.style.background = "#3a3a3a")
+                        (e.currentTarget.style.background =
+                          "rgba(255, 255, 255, 0.02)")
                       }
                       onMouseLeave={(e) =>
                         (e.currentTarget.style.background = "transparent")
@@ -515,79 +613,88 @@ const AddFromHome = () => {
                     >
                       <td
                         style={{
-                          padding: "1rem",
-                          color: "#ffffff",
+                          padding: "1rem 1.5rem",
+                          color: "#FFFFFF",
                           fontSize: "0.875rem",
                           position: "sticky",
                           left: 0,
-                          background: "#2d2d2d",
+                          background: "#1E1E1E",
                           fontWeight: "500",
                         }}
                         onMouseEnter={(e) => {
                           if (e.currentTarget.parentElement.matches(":hover")) {
-                            e.currentTarget.style.background = "#3a3a3a";
+                            e.currentTarget.style.background = "#252528";
                           }
                         }}
                         onMouseLeave={(e) =>
-                          (e.currentTarget.style.background = "#2d2d2d")
+                          (e.currentTarget.style.background = "#1E1E1E")
                         }
                       >
                         <div>{employee.employeeName}</div>
                         {employee.employeeCode && (
                           <div
-                            style={{ fontSize: "0.75rem", color: "#9ca3af" }}
+                            style={{
+                              fontSize: "0.75rem",
+                              color: "rgba(255, 255, 255, 0.5)",
+                            }}
                           >
                             {employee.employeeCode}
                           </div>
                         )}
                       </td>
                       {employee.weekSchedule.map((daySchedule) => {
-                        const isFriday = new Date(daySchedule.date).getDay() === 5;
+                        const isFriday =
+                          new Date(daySchedule.date).getDay() === 5;
                         return (
-                        <td
-                          key={daySchedule.date}
-                          style={{
-                            padding: "1rem",
-                            textAlign: "center",
-                            fontSize: "0.875rem",
-                            background: isFriday ? "rgba(239, 68, 68, 0.05)" : "transparent",
-                          }}
-                        >
-                          {isFriday ? (
-                            <div
-                              style={{
-                                color: "#ef4444",
-                                fontSize: "0.75rem",
-                                fontWeight: "600",
-                              }}
-                            >
-                              Holiday
-                            </div>
-                          ) : daySchedule.isWFH ? (
-                            <div
-                              style={{
-                                background: "#10b981",
-                                color: "#ffffff",
-                                padding: "0.25rem 0.5rem",
-                                borderRadius: "0.25rem",
-                                fontSize: "0.75rem",
-                                fontWeight: "600",
-                                display: "inline-block",
-                              }}
-                              title={daySchedule.purpose || "Work From Home"}
-                            >
-                              {daySchedule.type === "WFH"
-                                ? "العمل من المنزل"
-                                : "إجازة"}
-                            </div>
-                          ) : (
-                            <div
-                              style={{ color: "#4a4a4a", fontSize: "1.25rem" }}
-                            >
-                              -
-                            </div>
-                          )}
-                        </td>
+                          <td
+                            key={daySchedule.date}
+                            style={{
+                              padding: "1rem",
+                              textAlign: "center",
+                              fontSize: "0.875rem",
+                              background: isFriday
+                                ? "rgba(239, 68, 68, 0.05)"
+                                : "transparent",
+                            }}
+                          >
+                            {isFriday ? (
+                              <div
+                                style={{
+                                  color: "#ef4444",
+                                  fontSize: "0.75rem",
+                                  fontWeight: "600",
+                                }}
+                              >
+                                Holiday
+                              </div>
+                            ) : daySchedule.isWFH ? (
+                              <div
+                                style={{
+                                  background: "rgba(16, 185, 129, 0.15)",
+                                  color: "#10b981",
+                                  padding: "0.375rem 0.75rem",
+                                  borderRadius: "6px",
+                                  fontSize: "0.75rem",
+                                  fontWeight: "600",
+                                  display: "inline-block",
+                                }}
+                                title={daySchedule.purpose || "Work From Home"}
+                              >
+                                {daySchedule.type === "WFH"
+                                  ? "العمل من المنزل"
+                                  : "إجازة"}
+                              </div>
+                            ) : (
+                              <div
+                                style={{
+                                  color: "rgba(255, 255, 255, 0.2)",
+                                  fontSize: "1.25rem",
+                                }}
+                              >
+                                -
+                              </div>
+                            )}
+                          </td>
                         );
                       })}
                     </tr>
@@ -602,13 +709,15 @@ const AddFromHome = () => {
       {/* Modal for Add WFH Form */}
       {showModal && (
         <div
+          className="modal-animate-overlay"
           style={{
             position: "fixed",
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            background: "rgba(0, 0, 0, 0.75)",
+            background: "rgba(0, 0, 0, 0.8)",
+            backdropFilter: "blur(4px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -620,222 +729,824 @@ const AddFromHome = () => {
           }}
         >
           <div
+            className="modal-animate-content"
             style={{
-              background: "#2d2d2d",
-              borderRadius: "0.75rem",
-              padding: "2rem",
+              background: "#1E1E1E",
+              borderRadius: "16px",
+              padding: "0",
               maxWidth: "800px",
               width: "100%",
               maxHeight: "90vh",
-              overflow: "auto",
+              overflow: "hidden",
+              border: "1px solid rgba(255, 255, 255, 0.06)",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
             }}
           >
-            <h2
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: "bold",
-                color: "#ffffff",
-                marginBottom: "0.5rem",
-              }}
-            >
-              Add Work From Home
-            </h2>
-            <p
-              style={{
-                color: "#9ca3af",
-                fontSize: "0.875rem",
-                marginBottom: "1.5rem",
-              }}
-            >
-              Submit a new work from home request
-            </p>
-
-            {/* Tabs */}
+            {/* Modal Header */}
             <div
               style={{
-                display: "flex",
-                gap: "0.5rem",
-                marginBottom: "1.5rem",
-                borderBottom: "1px solid #4a4a4a",
+                padding: "1.5rem 2rem",
+                borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+                background:
+                  "linear-gradient(to right, rgba(234, 131, 3, 0.1), transparent)",
               }}
             >
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveTab("manual");
-                  setError("");
-                }}
+              <h2
                 style={{
-                  padding: "0.75rem 1.5rem",
-                  background: "transparent",
-                  color: activeTab === "manual" ? "#f97316" : "#9ca3af",
-                  border: "none",
-                  borderBottom:
-                    activeTab === "manual"
-                      ? "2px solid #f97316"
-                      : "2px solid transparent",
-                  fontSize: "0.875rem",
+                  fontSize: "1.25rem",
                   fontWeight: "600",
-                  cursor: "pointer",
-                  transition: "all 0.2s",
+                  color: "#FFFFFF",
+                  marginBottom: "0.25rem",
                 }}
               >
-                Manual
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveTab("random");
-                  setError("");
-                }}
+                Add Work From Home
+              </h2>
+              <p
                 style={{
-                  padding: "0.75rem 1.5rem",
-                  background: "transparent",
-                  color: activeTab === "random" ? "#f97316" : "#9ca3af",
-                  border: "none",
-                  borderBottom:
-                    activeTab === "random"
-                      ? "2px solid #f97316"
-                      : "2px solid transparent",
+                  color: "rgba(255, 255, 255, 0.5)",
                   fontSize: "0.875rem",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                  transition: "all 0.2s",
+                  margin: 0,
                 }}
               >
-                Random
-              </button>
+                Submit a new work from home request
+              </p>
             </div>
 
-            {/* Error Message */}
-            {error && (
+            {/* Modal Body */}
+            <div
+              style={{
+                padding: "2rem",
+                maxHeight: "calc(90vh - 100px)",
+                overflowY: "auto",
+              }}
+            >
+              {/* Tabs */}
               <div
                 style={{
-                  background: "rgba(239, 68, 68, 0.1)",
-                  border: "1px solid #ef4444",
-                  color: "#ef4444",
-                  padding: "0.75rem 1rem",
-                  borderRadius: "0.5rem",
+                  display: "flex",
+                  gap: "0.5rem",
                   marginBottom: "1.5rem",
-                  fontSize: "0.875rem",
+                  borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
                 }}
               >
-                {error}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab("manual");
+                    setError("");
+                  }}
+                  style={{
+                    padding: "0.75rem 1.5rem",
+                    background: "transparent",
+                    color:
+                      activeTab === "manual"
+                        ? "#EA8303"
+                        : "rgba(255, 255, 255, 0.5)",
+                    border: "none",
+                    borderBottom:
+                      activeTab === "manual"
+                        ? "2px solid #EA8303"
+                        : "2px solid transparent",
+                    fontSize: "0.875rem",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                  }}
+                >
+                  Manual
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab("random");
+                    setError("");
+                  }}
+                  style={{
+                    padding: "0.75rem 1.5rem",
+                    background: "transparent",
+                    color:
+                      activeTab === "random"
+                        ? "#EA8303"
+                        : "rgba(255, 255, 255, 0.5)",
+                    border: "none",
+                    borderBottom:
+                      activeTab === "random"
+                        ? "2px solid #EA8303"
+                        : "2px solid transparent",
+                    fontSize: "0.875rem",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                  }}
+                >
+                  Random
+                </button>
               </div>
-            )}
 
-            {/* Manual Tab Content */}
-            {activeTab === "manual" && (
-              <form onSubmit={handleSubmit}>
-                {/* Employee Name */}
-                <div style={{ marginBottom: "1.5rem" }} ref={dropdownRef}>
-                  <label
-                    htmlFor="employeeName"
-                    style={{
-                      display: "block",
-                      color: "#ffffff",
-                      fontSize: "0.875rem",
-                      fontWeight: "500",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    Employee Name *
-                  </label>
-                  <div style={{ position: "relative" }}>
-                    <input
-                      type="text"
-                      id="employeeName"
-                      value={searchQuery || employeeName}
-                      onChange={(e) => {
-                        setSearchQuery(e.target.value);
-                        setEmployeeName("");
-                        setShowDropdown(true);
-                        setError("");
-                      }}
-                      placeholder="Search employee name or code..."
-                      style={{
-                        width: "100%",
-                        background: "#3a3a3a",
-                        color: "#ffffff",
-                        border: "1px solid #4a4a4a",
-                        borderRadius: "0.5rem",
-                        padding: "0.75rem 2.5rem 0.75rem 1rem",
-                        fontSize: "0.875rem",
-                        outline: "none",
-                        transition: "all 0.2s",
-                      }}
-                      onFocus={(e) => {
-                        setShowDropdown(true);
-                        e.target.style.borderColor = "#f97316";
-                        e.target.style.boxShadow =
-                          "0 0 0 3px rgba(249, 115, 22, 0.1)";
-                      }}
-                      onBlur={(e) => {
-                        e.target.style.borderColor = "#4a4a4a";
-                        e.target.style.boxShadow = "none";
-                      }}
-                    />
-                    <i
-                      className="fas fa-search"
-                      style={{
-                        position: "absolute",
-                        right: "1rem",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        color: "#9ca3af",
-                        pointerEvents: "none",
-                        fontSize: "0.875rem",
-                      }}
-                    ></i>
+              {/* Error Message */}
+              {error && (
+                <div
+                  style={{
+                    background: "rgba(239, 68, 68, 0.1)",
+                    border: "1px solid rgba(239, 68, 68, 0.3)",
+                    color: "#ef4444",
+                    padding: "1rem 1.25rem",
+                    borderRadius: "12px",
+                    marginBottom: "1.5rem",
+                    fontSize: "0.875rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.75rem",
+                  }}
+                >
+                  <i className="fas fa-exclamation-circle"></i>
+                  {error}
+                </div>
+              )}
 
-                    {/* Dropdown */}
-                    {showDropdown &&
-                      !employeesLoading &&
-                      filteredEmployees.length > 0 && (
+              {/* Manual Tab Content */}
+              {activeTab === "manual" && (
+                <form onSubmit={handleSubmit}>
+                  {/* Employee Name */}
+                  <div style={{ marginBottom: "1.25rem" }} ref={dropdownRef}>
+                    <label
+                      htmlFor="employeeName"
+                      style={{
+                        display: "block",
+                        color: "rgba(255, 255, 255, 0.7)",
+                        fontSize: "0.8125rem",
+                        fontWeight: "500",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      Employee Name *
+                    </label>
+                    <div style={{ position: "relative" }}>
+                      <input
+                        type="text"
+                        id="employeeName"
+                        value={searchQuery || employeeName}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          setEmployeeName("");
+                          setShowDropdown(true);
+                          setError("");
+                        }}
+                        placeholder="Search employee name or code..."
+                        style={{
+                          width: "100%",
+                          background: "rgba(255, 255, 255, 0.04)",
+                          color: "#FFFFFF",
+                          border: "1px solid rgba(255, 255, 255, 0.08)",
+                          borderRadius: "10px",
+                          padding: "0.75rem 2.5rem 0.75rem 1rem",
+                          fontSize: "0.875rem",
+                          outline: "none",
+                          transition: "all 0.2s",
+                        }}
+                        onFocus={(e) => {
+                          setShowDropdown(true);
+                          e.target.style.borderColor = "#EA8303";
+                          e.target.style.boxShadow =
+                            "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                        }}
+                        onBlur={(e) => {
+                          e.target.style.borderColor =
+                            "rgba(255, 255, 255, 0.08)";
+                          e.target.style.boxShadow = "none";
+                        }}
+                      />
+                      <i
+                        className="fas fa-search"
+                        style={{
+                          position: "absolute",
+                          right: "1rem",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          color: "rgba(255, 255, 255, 0.4)",
+                          pointerEvents: "none",
+                          fontSize: "0.875rem",
+                        }}
+                      ></i>
+
+                      {/* Dropdown */}
+                      {showDropdown &&
+                        !employeesLoading &&
+                        filteredEmployees.length > 0 && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "100%",
+                              left: 0,
+                              right: 0,
+                              background: "#1E1E1E",
+                              border: "1px solid rgba(255, 255, 255, 0.08)",
+                              borderRadius: "10px",
+                              marginTop: "0.25rem",
+                              maxHeight: "200px",
+                              overflowY: "auto",
+                              zIndex: 1000,
+                              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.4)",
+                            }}
+                          >
+                            {filteredEmployees.map((emp) => (
+                              <div
+                                key={emp.id}
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  setEmployeeName(emp.fullName);
+                                  setSelectedEmployeeId(emp.id);
+                                  setSearchQuery("");
+                                  setShowDropdown(false);
+                                  setError("");
+                                }}
+                                style={{
+                                  padding: "0.75rem 1rem",
+                                  cursor: "pointer",
+                                  borderBottom:
+                                    "1px solid rgba(255, 255, 255, 0.06)",
+                                  transition: "background 0.2s",
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.background =
+                                    "rgba(255, 255, 255, 0.04)";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.background =
+                                    "transparent";
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    color: "#FFFFFF",
+                                    fontSize: "0.875rem",
+                                    fontWeight: "500",
+                                  }}
+                                >
+                                  {emp.fullName}
+                                </div>
+                                <div
+                                  style={{
+                                    color: "rgba(255, 255, 255, 0.5)",
+                                    fontSize: "0.75rem",
+                                    marginTop: "0.125rem",
+                                  }}
+                                >
+                                  {emp.employeeCode}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                      {/* Loading state */}
+                      {showDropdown && employeesLoading && (
                         <div
                           style={{
                             position: "absolute",
                             top: "100%",
                             left: 0,
                             right: 0,
-                            background: "#2d2d2d",
-                            border: "1px solid #4a4a4a",
-                            borderRadius: "0.5rem",
+                            background: "#1E1E1E",
+                            border: "1px solid rgba(255, 255, 255, 0.08)",
+                            borderRadius: "10px",
                             marginTop: "0.25rem",
-                            maxHeight: "200px",
-                            overflowY: "auto",
+                            padding: "1rem",
+                            textAlign: "center",
+                            color: "rgba(255, 255, 255, 0.5)",
+                            fontSize: "0.875rem",
                             zIndex: 1000,
-                            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)",
                           }}
                         >
-                          {filteredEmployees.map((emp) => (
-                            <div
-                              key={emp.id}
-                              onMouseDown={(e) => {
-                                e.preventDefault();
-                                setEmployeeName(emp.fullName);
-                                setSelectedEmployeeId(emp.id);
-                                setSearchQuery("");
-                                setShowDropdown(false);
-                                setError("");
-                              }}
-                              style={{
-                                padding: "0.75rem 1rem",
-                                cursor: "pointer",
-                                borderBottom: "1px solid #3a3a3a",
-                                transition: "background 0.2s",
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.background = "#3a3a3a";
-                              }}
-                              onMouseLeave={(e) => {
+                          <i
+                            className="fas fa-spinner fa-spin"
+                            style={{ marginRight: "0.5rem" }}
+                          ></i>
+                          Loading employees...
+                        </div>
+                      )}
+
+                      {/* No results message */}
+                      {showDropdown &&
+                        !employeesLoading &&
+                        searchQuery &&
+                        filteredEmployees.length === 0 && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "100%",
+                              left: 0,
+                              right: 0,
+                              background: "#1E1E1E",
+                              border: "1px solid rgba(255, 255, 255, 0.08)",
+                              borderRadius: "10px",
+                              marginTop: "0.25rem",
+                              padding: "1rem",
+                              textAlign: "center",
+                              color: "rgba(255, 255, 255, 0.5)",
+                              fontSize: "0.875rem",
+                              zIndex: 1000,
+                            }}
+                          >
+                            {employees.length === 0
+                              ? "No employees available"
+                              : "No employees found"}
+                          </div>
+                        )}
+                    </div>
+                  </div>
+
+                  {/* Date Ranges Section */}
+                  <div style={{ marginBottom: "1.25rem" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      <label
+                        style={{
+                          display: "block",
+                          color: "rgba(255, 255, 255, 0.7)",
+                          fontSize: "0.8125rem",
+                          fontWeight: "500",
+                        }}
+                      >
+                        Date Ranges * (Current Week Only)
+                      </label>
+                      <button
+                        type="button"
+                        onClick={handleAddDateRange}
+                        style={{
+                          background: "rgba(234, 131, 3, 0.15)",
+                          color: "#EA8303",
+                          padding: "0.5rem 1rem",
+                          borderRadius: "8px",
+                          border: "none",
+                          fontSize: "0.75rem",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          transition: "all 0.2s",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.background = "rgba(234, 131, 3, 0.25)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.background = "rgba(234, 131, 3, 0.15)";
+                        }}
+                      >
+                        <i className="fas fa-plus"></i>
+                        Add another day
+                      </button>
+                    </div>
+
+                    {/* Date Range Inputs */}
+                    {dateRanges.map((range, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: "flex",
+                          gap: "0.5rem",
+                          marginBottom: "0.75rem",
+                          alignItems: "center",
+                        }}
+                      >
+                        {/* Start Date */}
+                        <div style={{ position: "relative", flex: 1 }}>
+                          <input
+                            type="date"
+                            value={range.startDate}
+                            onChange={(e) =>
+                              handleDateRangeChange(
+                                index,
+                                "startDate",
+                                e.target.value
+                              )
+                            }
+                            min={weekRange.start}
+                            max={weekRange.end}
+                            placeholder="Start Date"
+                            style={{
+                              width: "100%",
+                              background: "rgba(255, 255, 255, 0.04)",
+                              color: "#FFFFFF",
+                              border: "1px solid rgba(255, 255, 255, 0.08)",
+                              borderRadius: "10px",
+                              padding: "0.75rem 2.5rem 0.75rem 1rem",
+                              fontSize: "0.875rem",
+                              outline: "none",
+                              cursor: "pointer",
+                              transition: "all 0.2s",
+                              colorScheme: "dark",
+                            }}
+                            onFocus={(e) => {
+                              e.target.style.borderColor = "#EA8303";
+                              e.target.style.boxShadow =
+                                "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                            }}
+                            onBlur={(e) => {
+                              e.target.style.borderColor =
+                                "rgba(255, 255, 255, 0.08)";
+                              e.target.style.boxShadow = "none";
+                            }}
+                          />
+                          <i
+                            className="fas fa-calendar-alt"
+                            style={{
+                              position: "absolute",
+                              right: "1rem",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              color: "rgba(255, 255, 255, 0.4)",
+                              pointerEvents: "none",
+                              fontSize: "0.875rem",
+                            }}
+                          ></i>
+                        </div>
+
+                        {/* End Date */}
+                        <div style={{ position: "relative", flex: 1 }}>
+                          <input
+                            type="date"
+                            value={range.endDate}
+                            onChange={(e) =>
+                              handleDateRangeChange(
+                                index,
+                                "endDate",
+                                e.target.value
+                              )
+                            }
+                            min={range.startDate || weekRange.start}
+                            max={weekRange.end}
+                            placeholder="End Date"
+                            style={{
+                              width: "100%",
+                              background: "rgba(255, 255, 255, 0.04)",
+                              color: "#FFFFFF",
+                              border: "1px solid rgba(255, 255, 255, 0.08)",
+                              borderRadius: "10px",
+                              padding: "0.75rem 2.5rem 0.75rem 1rem",
+                              fontSize: "0.875rem",
+                              outline: "none",
+                              cursor: "pointer",
+                              transition: "all 0.2s",
+                              colorScheme: "dark",
+                            }}
+                            onFocus={(e) => {
+                              e.target.style.borderColor = "#EA8303";
+                              e.target.style.boxShadow =
+                                "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                            }}
+                            onBlur={(e) => {
+                              e.target.style.borderColor =
+                                "rgba(255, 255, 255, 0.08)";
+                              e.target.style.boxShadow = "none";
+                            }}
+                          />
+                          <i
+                            className="fas fa-calendar-alt"
+                            style={{
+                              position: "absolute",
+                              right: "1rem",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              color: "rgba(255, 255, 255, 0.4)",
+                              pointerEvents: "none",
+                              fontSize: "0.875rem",
+                            }}
+                          ></i>
+                        </div>
+
+                        {/* Remove Button */}
+                        {dateRanges.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveDateRange(index)}
+                            style={{
+                              background: "rgba(239, 68, 68, 0.15)",
+                              color: "#ef4444",
+                              padding: "0.75rem 1rem",
+                              borderRadius: "10px",
+                              border: "none",
+                              fontSize: "0.875rem",
+                              cursor: "pointer",
+                              transition: "all 0.2s",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.background =
+                                "rgba(239, 68, 68, 0.25)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.background =
+                                "rgba(239, 68, 68, 0.15)";
+                            }}
+                          >
+                            <i className="fas fa-trash"></i>
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Number of Days Display */}
+                  {calculateTotalDays() > 0 && (
+                    <div
+                      style={{
+                        background: "rgba(234, 131, 3, 0.1)",
+                        border: "1px solid rgba(234, 131, 3, 0.3)",
+                        color: "#EA8303",
+                        padding: "1rem 1.25rem",
+                        borderRadius: "12px",
+                        marginBottom: "1.5rem",
+                        fontSize: "0.875rem",
+                        textAlign: "center",
+                      }}
+                    >
+                      <i
+                        className="fas fa-calendar-check"
+                        style={{ marginRight: "0.5rem" }}
+                      ></i>
+                      Total Days: <strong>{calculateTotalDays()}</strong> day
+                      {calculateTotalDays() !== 1 ? "s" : ""}
+                    </div>
+                  )}
+
+                  {/* Buttons */}
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "1rem",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={handleCancel}
+                      disabled={loading}
+                      style={{
+                        background: "rgba(255, 255, 255, 0.06)",
+                        backdropFilter: "blur(10px)",
+                        WebkitBackdropFilter: "blur(10px)",
+                        color: "#FFFFFF",
+                        padding: "0.75rem 1.5rem",
+                        borderRadius: "12px",
+                        border: "1px solid rgba(255, 255, 255, 0.15)",
+                        fontSize: "0.875rem",
+                        fontWeight: "600",
+                        cursor: loading ? "not-allowed" : "pointer",
+                        opacity: loading ? 0.5 : 1,
+                        transition: "all 0.3s ease",
+                        boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!loading) {
+                          e.currentTarget.style.background =
+                            "rgba(255, 255, 255, 0.12)";
+                          e.currentTarget.style.borderColor =
+                            "rgba(255, 255, 255, 0.25)";
+                          e.currentTarget.style.transform = "translateY(-2px)";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!loading) {
+                          e.currentTarget.style.background =
+                            "rgba(255, 255, 255, 0.06)";
+                          e.currentTarget.style.borderColor =
+                            "rgba(255, 255, 255, 0.15)";
+                          e.currentTarget.style.transform = "translateY(0)";
+                        }
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      style={{
+                        background: loading
+                          ? "rgba(255, 255, 255, 0.1)"
+                          : "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)",
+                        backdropFilter: "blur(10px)",
+                        WebkitBackdropFilter: "blur(10px)",
+                        color: "#FFFFFF",
+                        padding: "0.75rem 1.5rem",
+                        borderRadius: "12px",
+                        border: loading
+                          ? "none"
+                          : "1px solid rgba(255, 255, 255, 0.2)",
+                        fontSize: "0.875rem",
+                        fontWeight: "600",
+                        cursor: loading ? "not-allowed" : "pointer",
+                        transition: "all 0.3s ease",
+                        boxShadow: loading
+                          ? "none"
+                          : "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!loading) {
+                          e.currentTarget.style.background =
+                            "linear-gradient(135deg, rgba(234, 131, 3, 1) 0%, rgba(234, 131, 3, 0.85) 100%)";
+                          e.currentTarget.style.boxShadow =
+                            "0 6px 20px rgba(234, 131, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+                          e.currentTarget.style.transform = "translateY(-2px)";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!loading) {
+                          e.currentTarget.style.background =
+                            "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)";
+                          e.currentTarget.style.boxShadow =
+                            "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+                          e.currentTarget.style.transform = "translateY(0)";
+                        }
+                      }}
+                    >
+                      {loading ? "Submitting..." : "Submit Request"}
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* Random Tab Content */}
+              {activeTab === "random" && (
+                <div>
+                  {/* Number of Days Input */}
+                  <div style={{ marginBottom: "1.25rem" }}>
+                    <label
+                      htmlFor="daysPerEmployee"
+                      style={{
+                        display: "block",
+                        color: "rgba(255, 255, 255, 0.7)",
+                        fontSize: "0.8125rem",
+                        fontWeight: "500",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      Number of WFH days per employee (1-7)
+                    </label>
+                    <input
+                      type="number"
+                      id="daysPerEmployee"
+                      min="1"
+                      max="7"
+                      value={daysPerEmployee}
+                      onChange={(e) =>
+                        setDaysPerEmployee(parseInt(e.target.value))
+                      }
+                      style={{
+                        width: "100%",
+                        background: "rgba(255, 255, 255, 0.04)",
+                        color: "#FFFFFF",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                        borderRadius: "10px",
+                        padding: "0.75rem 1rem",
+                        fontSize: "0.875rem",
+                        outline: "none",
+                        transition: "all 0.2s",
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = "#EA8303";
+                        e.target.style.boxShadow =
+                          "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor =
+                          "rgba(255, 255, 255, 0.08)";
+                        e.target.style.boxShadow = "none";
+                      }}
+                    />
+                    <p
+                      style={{
+                        color: "rgba(255, 255, 255, 0.5)",
+                        fontSize: "0.75rem",
+                        marginTop: "0.5rem",
+                      }}
+                    >
+                      This number will be applied to all selected employees
+                    </p>
+                  </div>
+
+                  {/* Employee Selection */}
+                  <div style={{ marginBottom: "1.5rem" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: "0.75rem",
+                      }}
+                    >
+                      <label
+                        style={{
+                          display: "block",
+                          color: "rgba(255, 255, 255, 0.7)",
+                          fontSize: "0.8125rem",
+                          fontWeight: "500",
+                        }}
+                      >
+                        Select Employees
+                      </label>
+                      <button
+                        type="button"
+                        onClick={handleSelectAllEmployees}
+                        style={{
+                          background: "transparent",
+                          color: "#EA8303",
+                          border: "none",
+                          fontSize: "0.75rem",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                          textDecoration: "underline",
+                        }}
+                      >
+                        {selectedEmployees.length === employees.length
+                          ? "Deselect All"
+                          : "Select All"}
+                      </button>
+                    </div>
+
+                    <div
+                      style={{
+                        maxHeight: "300px",
+                        overflowY: "auto",
+                        background: "rgba(255, 255, 255, 0.02)",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                        borderRadius: "10px",
+                        padding: "0.5rem",
+                      }}
+                    >
+                      {employeesLoading ? (
+                        <div
+                          style={{
+                            padding: "1rem",
+                            textAlign: "center",
+                            color: "rgba(255, 255, 255, 0.5)",
+                          }}
+                        >
+                          <i
+                            className="fas fa-spinner fa-spin"
+                            style={{ marginRight: "0.5rem" }}
+                          ></i>
+                          Loading employees...
+                        </div>
+                      ) : employees.length === 0 ? (
+                        <div
+                          style={{
+                            padding: "1rem",
+                            textAlign: "center",
+                            color: "rgba(255, 255, 255, 0.5)",
+                          }}
+                        >
+                          No employees available
+                        </div>
+                      ) : (
+                        employees.map((emp) => (
+                          <div
+                            key={emp.id}
+                            onClick={() => handleSelectEmployee(emp.id)}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              padding: "0.75rem",
+                              cursor: "pointer",
+                              borderRadius: "8px",
+                              transition: "background 0.2s",
+                              background: selectedEmployees.includes(emp.id)
+                                ? "rgba(234, 131, 3, 0.15)"
+                                : "transparent",
+                            }}
+                            onMouseEnter={(e) => {
+                              if (!selectedEmployees.includes(emp.id)) {
+                                e.currentTarget.style.background =
+                                  "rgba(255, 255, 255, 0.04)";
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!selectedEmployees.includes(emp.id)) {
                                 e.currentTarget.style.background =
                                   "transparent";
+                              }
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedEmployees.includes(emp.id)}
+                              onChange={() => {}}
+                              style={{
+                                marginRight: "0.75rem",
+                                cursor: "pointer",
+                                accentColor: "#EA8303",
                               }}
-                            >
+                            />
+                            <div>
                               <div
                                 style={{
-                                  color: "#ffffff",
+                                  color: "#FFFFFF",
                                   fontSize: "0.875rem",
                                   fontWeight: "500",
                                 }}
@@ -844,703 +1555,132 @@ const AddFromHome = () => {
                               </div>
                               <div
                                 style={{
-                                  color: "#9ca3af",
+                                  color: "rgba(255, 255, 255, 0.5)",
                                   fontSize: "0.75rem",
-                                  marginTop: "0.125rem",
                                 }}
                               >
                                 {emp.employeeCode}
                               </div>
                             </div>
-                          ))}
-                        </div>
+                          </div>
+                        ))
                       )}
-
-                    {/* Loading state */}
-                    {showDropdown && employeesLoading && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: "100%",
-                          left: 0,
-                          right: 0,
-                          background: "#2d2d2d",
-                          border: "1px solid #4a4a4a",
-                          borderRadius: "0.5rem",
-                          marginTop: "0.25rem",
-                          padding: "1rem",
-                          textAlign: "center",
-                          color: "#9ca3af",
-                          fontSize: "0.875rem",
-                          zIndex: 1000,
-                        }}
-                      >
-                        Loading employees...
-                      </div>
-                    )}
-
-                    {/* No results message */}
-                    {showDropdown &&
-                      !employeesLoading &&
-                      searchQuery &&
-                      filteredEmployees.length === 0 && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: "100%",
-                            left: 0,
-                            right: 0,
-                            background: "#2d2d2d",
-                            border: "1px solid #4a4a4a",
-                            borderRadius: "0.5rem",
-                            marginTop: "0.25rem",
-                            padding: "1rem",
-                            textAlign: "center",
-                            color: "#9ca3af",
-                            fontSize: "0.875rem",
-                            zIndex: 1000,
-                          }}
-                        >
-                          {employees.length === 0
-                            ? "No employees available"
-                            : "No employees found"}
-                        </div>
-                      )}
+                    </div>
+                    <p
+                      style={{
+                        color: "rgba(255, 255, 255, 0.5)",
+                        fontSize: "0.75rem",
+                        marginTop: "0.5rem",
+                      }}
+                    >
+                      {selectedEmployees.length} employee
+                      {selectedEmployees.length !== 1 ? "s" : ""} selected
+                    </p>
                   </div>
-                </div>
 
-                {/* Date Ranges Section */}
-                <div style={{ marginBottom: "1.5rem" }}>
+                  {/* Buttons */}
                   <div
                     style={{
                       display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: "0.5rem",
+                      gap: "1rem",
+                      justifyContent: "flex-end",
                     }}
                   >
-                    <label
-                      style={{
-                        display: "block",
-                        color: "#ffffff",
-                        fontSize: "0.875rem",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Date Ranges * (Current Week Only)
-                    </label>
                     <button
                       type="button"
-                      onClick={handleAddDateRange}
+                      onClick={handleCancel}
+                      disabled={randomLoading}
                       style={{
-                        background: "#f97316",
-                        color: "#ffffff",
-                        padding: "0.5rem 1rem",
-                        borderRadius: "0.375rem",
-                        border: "none",
-                        fontSize: "0.75rem",
+                        background: "rgba(255, 255, 255, 0.06)",
+                        backdropFilter: "blur(10px)",
+                        WebkitBackdropFilter: "blur(10px)",
+                        color: "#FFFFFF",
+                        padding: "0.75rem 1.5rem",
+                        borderRadius: "12px",
+                        border: "1px solid rgba(255, 255, 255, 0.15)",
+                        fontSize: "0.875rem",
                         fontWeight: "600",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                        transition: "background 0.2s",
+                        cursor: randomLoading ? "not-allowed" : "pointer",
+                        opacity: randomLoading ? 0.5 : 1,
+                        transition: "all 0.3s ease",
+                        boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.1)",
                       }}
                       onMouseEnter={(e) => {
-                        e.target.style.background = "#ea580c";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.background = "#f97316";
-                      }}
-                    >
-                      <i className="fas fa-plus"></i>
-                      Add another day
-                    </button>
-                  </div>
-
-                  {/* Date Range Inputs */}
-                  {dateRanges.map((range, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        display: "flex",
-                        gap: "0.5rem",
-                        marginBottom: "0.75rem",
-                        alignItems: "center",
-                      }}
-                    >
-                      {/* Start Date */}
-                      <div style={{ position: "relative", flex: 1 }}>
-                        <input
-                          type="date"
-                          value={range.startDate}
-                          onChange={(e) =>
-                            handleDateRangeChange(
-                              index,
-                              "startDate",
-                              e.target.value
-                            )
-                          }
-                          min={weekRange.start}
-                          max={weekRange.end}
-                          placeholder="Start Date"
-                          style={{
-                            width: "100%",
-                            background: "#3a3a3a",
-                            color: "#ffffff",
-                            border: "1px solid #4a4a4a",
-                            borderRadius: "0.5rem",
-                            padding: "0.75rem 2.5rem 0.75rem 1rem",
-                            fontSize: "0.875rem",
-                            outline: "none",
-                            cursor: "pointer",
-                            transition: "all 0.2s",
-                            colorScheme: "dark",
-                          }}
-                          onFocus={(e) => {
-                            e.target.style.borderColor = "#f97316";
-                            e.target.style.boxShadow =
-                              "0 0 0 3px rgba(249, 115, 22, 0.1)";
-                          }}
-                          onBlur={(e) => {
-                            e.target.style.borderColor = "#4a4a4a";
-                            e.target.style.boxShadow = "none";
-                          }}
-                        />
-                        <i
-                          className="fas fa-calendar-alt"
-                          style={{
-                            position: "absolute",
-                            right: "1rem",
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            color: "#9ca3af",
-                            pointerEvents: "none",
-                            fontSize: "0.875rem",
-                          }}
-                        ></i>
-                      </div>
-
-                      {/* End Date */}
-                      <div style={{ position: "relative", flex: 1 }}>
-                        <input
-                          type="date"
-                          value={range.endDate}
-                          onChange={(e) =>
-                            handleDateRangeChange(
-                              index,
-                              "endDate",
-                              e.target.value
-                            )
-                          }
-                          min={range.startDate || weekRange.start}
-                          max={weekRange.end}
-                          placeholder="End Date"
-                          style={{
-                            width: "100%",
-                            background: "#3a3a3a",
-                            color: "#ffffff",
-                            border: "1px solid #4a4a4a",
-                            borderRadius: "0.5rem",
-                            padding: "0.75rem 2.5rem 0.75rem 1rem",
-                            fontSize: "0.875rem",
-                            outline: "none",
-                            cursor: "pointer",
-                            transition: "all 0.2s",
-                            colorScheme: "dark",
-                          }}
-                          onFocus={(e) => {
-                            e.target.style.borderColor = "#f97316";
-                            e.target.style.boxShadow =
-                              "0 0 0 3px rgba(249, 115, 22, 0.1)";
-                          }}
-                          onBlur={(e) => {
-                            e.target.style.borderColor = "#4a4a4a";
-                            e.target.style.boxShadow = "none";
-                          }}
-                        />
-                        <i
-                          className="fas fa-calendar-alt"
-                          style={{
-                            position: "absolute",
-                            right: "1rem",
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            color: "#9ca3af",
-                            pointerEvents: "none",
-                            fontSize: "0.875rem",
-                          }}
-                        ></i>
-                      </div>
-
-                      {/* Remove Button */}
-                      {dateRanges.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveDateRange(index)}
-                          style={{
-                            background: "#ef4444",
-                            color: "#ffffff",
-                            padding: "0.75rem 1rem",
-                            borderRadius: "0.5rem",
-                            border: "none",
-                            fontSize: "0.875rem",
-                            cursor: "pointer",
-                            transition: "background 0.2s",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.target.style.background = "#dc2626";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.target.style.background = "#ef4444";
-                          }}
-                        >
-                          <i className="fas fa-trash"></i>
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Number of Days Display */}
-                {calculateTotalDays() > 0 && (
-                  <div
-                    style={{
-                      background: "rgba(249, 115, 22, 0.1)",
-                      border: "1px solid #f97316",
-                      color: "#f97316",
-                      padding: "0.75rem 1rem",
-                      borderRadius: "0.5rem",
-                      marginBottom: "1.5rem",
-                      fontSize: "0.875rem",
-                      textAlign: "center",
-                    }}
-                  >
-                    Total Days: <strong>{calculateTotalDays()}</strong> day
-                    {calculateTotalDays() !== 1 ? "s" : ""}
-                  </div>
-                )}
-
-                {/* Reason (Optional) */}
-                <div style={{ marginBottom: "2rem" }}>
-                  <label
-                    htmlFor="reason"
-                    style={{
-                      display: "block",
-                      color: "#ffffff",
-                      fontSize: "0.875rem",
-                      fontWeight: "500",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    Purpose / الغرض من النموذج الإداري
-                  </label>
-                  <div style={{ position: "relative" }}>
-                    <select
-                      id="reason"
-                      value={reason}
-                      onChange={(e) => {
-                        setReason(e.target.value);
-                        if (e.target.value !== "Other") {
-                          setCustomReason("");
+                        if (!randomLoading) {
+                          e.currentTarget.style.background =
+                            "rgba(255, 255, 255, 0.12)";
+                          e.currentTarget.style.borderColor =
+                            "rgba(255, 255, 255, 0.25)";
+                          e.currentTarget.style.transform = "translateY(-2px)";
                         }
                       }}
-                      style={{
-                        width: "100%",
-                        background: "#3a3a3a",
-                        color: "#ffffff",
-                        border: "1px solid #4a4a4a",
-                        borderRadius: "0.5rem",
-                        padding: "0.75rem 2.5rem 0.75rem 1rem",
-                        fontSize: "0.875rem",
-                        outline: "none",
-                        cursor: "pointer",
-                        transition: "all 0.2s",
-                        appearance: "none",
-                      }}
-                      onFocus={(e) => {
-                        e.target.style.borderColor = "#f97316";
-                        e.target.style.boxShadow =
-                          "0 0 0 3px rgba(249, 115, 22, 0.1)";
-                      }}
-                      onBlur={(e) => {
-                        e.target.style.borderColor = "#4a4a4a";
-                        e.target.style.boxShadow = "none";
+                      onMouseLeave={(e) => {
+                        if (!randomLoading) {
+                          e.currentTarget.style.background =
+                            "rgba(255, 255, 255, 0.06)";
+                          e.currentTarget.style.borderColor =
+                            "rgba(255, 255, 255, 0.15)";
+                          e.currentTarget.style.transform = "translateY(0)";
+                        }
                       }}
                     >
-                      <option value="">Select purpose...</option>
-                      <option value="اجتماع">اجتماع (Meeting)</option>
-                      <option value="تدريب">تدريب (Training)</option>
-                      <option value="مهمة عمل">مهمة عمل (Work Task)</option>
-                      <option value="ظروف شخصية">
-                        ظروف شخصية (Personal Circumstances)
-                      </option>
-                      <option value="زيارة ميدانية">
-                        زيارة ميدانية (Field Visit)
-                      </option>
-                      <option value="Other">Other (Custom)</option>
-                    </select>
-                    <i
-                      className="fas fa-chevron-down"
-                      style={{
-                        position: "absolute",
-                        right: "1rem",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        color: "#9ca3af",
-                        pointerEvents: "none",
-                        fontSize: "0.875rem",
-                      }}
-                    ></i>
-                  </div>
-
-                  {/* Custom Reason Input - Show when 'Other' is selected */}
-                  {reason === "Other" && (
-                    <div style={{ marginTop: "0.75rem" }}>
-                      <input
-                        type="text"
-                        value={customReason}
-                        onChange={(e) => setCustomReason(e.target.value)}
-                        placeholder="Enter custom purpose..."
-                        style={{
-                          width: "100%",
-                          background: "#3a3a3a",
-                          color: "#ffffff",
-                          border: "1px solid #4a4a4a",
-                          borderRadius: "0.5rem",
-                          padding: "0.75rem 1rem",
-                          fontSize: "0.875rem",
-                          outline: "none",
-                          transition: "all 0.2s",
-                        }}
-                        onFocus={(e) => {
-                          e.target.style.borderColor = "#f97316";
-                          e.target.style.boxShadow =
-                            "0 0 0 3px rgba(249, 115, 22, 0.1)";
-                        }}
-                        onBlur={(e) => {
-                          e.target.style.borderColor = "#4a4a4a";
-                          e.target.style.boxShadow = "none";
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Buttons */}
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "1rem",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    disabled={loading}
-                    style={{
-                      background: "#3a3a3a",
-                      color: "#ffffff",
-                      padding: "0.75rem 1.5rem",
-                      borderRadius: "0.5rem",
-                      border: "1px solid #4a4a4a",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
-                      cursor: loading ? "not-allowed" : "pointer",
-                      opacity: loading ? 0.5 : 1,
-                      transition: "background 0.2s",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!loading) e.target.style.background = "#4a4a4a";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!loading) e.target.style.background = "#3a3a3a";
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    style={{
-                      background: loading ? "#9ca3af" : "#f97316",
-                      color: "#ffffff",
-                      padding: "0.75rem 1.5rem",
-                      borderRadius: "0.5rem",
-                      border: "none",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
-                      cursor: loading ? "not-allowed" : "pointer",
-                      transition: "background 0.2s",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!loading) e.target.style.background = "#ea580c";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!loading) e.target.style.background = "#f97316";
-                    }}
-                  >
-                    {loading ? "Submitting..." : "Submit Request"}
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {/* Random Tab Content */}
-            {activeTab === "random" && (
-              <div>
-                {/* Number of Days Input */}
-                <div style={{ marginBottom: "1.5rem" }}>
-                  <label
-                    htmlFor="daysPerEmployee"
-                    style={{
-                      display: "block",
-                      color: "#ffffff",
-                      fontSize: "0.875rem",
-                      fontWeight: "500",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    Number of WFH days per employee (1-7)
-                  </label>
-                  <input
-                    type="number"
-                    id="daysPerEmployee"
-                    min="1"
-                    max="7"
-                    value={daysPerEmployee}
-                    onChange={(e) =>
-                      setDaysPerEmployee(parseInt(e.target.value))
-                    }
-                    style={{
-                      width: "100%",
-                      background: "#3a3a3a",
-                      color: "#ffffff",
-                      border: "1px solid #4a4a4a",
-                      borderRadius: "0.5rem",
-                      padding: "0.75rem 1rem",
-                      fontSize: "0.875rem",
-                      outline: "none",
-                    }}
-                  />
-                  <p
-                    style={{
-                      color: "#9ca3af",
-                      fontSize: "0.75rem",
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    This number will be applied to all selected employees
-                  </p>
-                </div>
-
-                {/* Employee Selection */}
-                <div style={{ marginBottom: "1.5rem" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: "0.75rem",
-                    }}
-                  >
-                    <label
-                      style={{
-                        display: "block",
-                        color: "#ffffff",
-                        fontSize: "0.875rem",
-                        fontWeight: "500",
-                      }}
-                    >
-                      Select Employees
-                    </label>
+                      Cancel
+                    </button>
                     <button
                       type="button"
-                      onClick={handleSelectAllEmployees}
+                      onClick={handleGenerateRandomWFH}
+                      disabled={randomLoading || selectedEmployees.length === 0}
                       style={{
-                        background: "transparent",
-                        color: "#f97316",
-                        border: "none",
-                        fontSize: "0.75rem",
+                        background:
+                          randomLoading || selectedEmployees.length === 0
+                            ? "rgba(255, 255, 255, 0.1)"
+                            : "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)",
+                        backdropFilter: "blur(10px)",
+                        WebkitBackdropFilter: "blur(10px)",
+                        color: "#FFFFFF",
+                        padding: "0.75rem 1.5rem",
+                        borderRadius: "12px",
+                        border:
+                          randomLoading || selectedEmployees.length === 0
+                            ? "none"
+                            : "1px solid rgba(255, 255, 255, 0.2)",
+                        fontSize: "0.875rem",
                         fontWeight: "600",
-                        cursor: "pointer",
-                        textDecoration: "underline",
+                        cursor:
+                          randomLoading || selectedEmployees.length === 0
+                            ? "not-allowed"
+                            : "pointer",
+                        transition: "all 0.3s ease",
+                        boxShadow:
+                          randomLoading || selectedEmployees.length === 0
+                            ? "none"
+                            : "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!randomLoading && selectedEmployees.length > 0) {
+                          e.currentTarget.style.background =
+                            "linear-gradient(135deg, rgba(234, 131, 3, 1) 0%, rgba(234, 131, 3, 0.85) 100%)";
+                          e.currentTarget.style.boxShadow =
+                            "0 6px 20px rgba(234, 131, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+                          e.currentTarget.style.transform = "translateY(-2px)";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!randomLoading && selectedEmployees.length > 0) {
+                          e.currentTarget.style.background =
+                            "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)";
+                          e.currentTarget.style.boxShadow =
+                            "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+                          e.currentTarget.style.transform = "translateY(0)";
+                        }
                       }}
                     >
-                      {selectedEmployees.length === employees.length
-                        ? "Deselect All"
-                        : "Select All"}
+                      {randomLoading ? "Generating..." : "Generate Random WFH"}
                     </button>
                   </div>
-
-                  <div
-                    style={{
-                      maxHeight: "300px",
-                      overflowY: "auto",
-                      background: "#3a3a3a",
-                      border: "1px solid #4a4a4a",
-                      borderRadius: "0.5rem",
-                      padding: "0.5rem",
-                    }}
-                  >
-                    {employeesLoading ? (
-                      <div
-                        style={{
-                          padding: "1rem",
-                          textAlign: "center",
-                          color: "#9ca3af",
-                        }}
-                      >
-                        Loading employees...
-                      </div>
-                    ) : employees.length === 0 ? (
-                      <div
-                        style={{
-                          padding: "1rem",
-                          textAlign: "center",
-                          color: "#9ca3af",
-                        }}
-                      >
-                        No employees available
-                      </div>
-                    ) : (
-                      employees.map((emp) => (
-                        <div
-                          key={emp.id}
-                          onClick={() => handleSelectEmployee(emp.id)}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            padding: "0.75rem",
-                            cursor: "pointer",
-                            borderRadius: "0.375rem",
-                            transition: "background 0.2s",
-                            background: selectedEmployees.includes(emp.id)
-                              ? "#4a4a4a"
-                              : "transparent",
-                          }}
-                          onMouseEnter={(e) => {
-                            if (!selectedEmployees.includes(emp.id)) {
-                              e.currentTarget.style.background = "#404040";
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            if (!selectedEmployees.includes(emp.id)) {
-                              e.currentTarget.style.background = "transparent";
-                            }
-                          }}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedEmployees.includes(emp.id)}
-                            onChange={() => {}}
-                            style={{
-                              marginRight: "0.75rem",
-                              cursor: "pointer",
-                              accentColor: "#f97316",
-                            }}
-                          />
-                          <div>
-                            <div
-                              style={{
-                                color: "#ffffff",
-                                fontSize: "0.875rem",
-                                fontWeight: "500",
-                              }}
-                            >
-                              {emp.fullName}
-                            </div>
-                            <div
-                              style={{ color: "#9ca3af", fontSize: "0.75rem" }}
-                            >
-                              {emp.employeeCode}
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                  <p
-                    style={{
-                      color: "#9ca3af",
-                      fontSize: "0.75rem",
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    {selectedEmployees.length} employee
-                    {selectedEmployees.length !== 1 ? "s" : ""} selected
-                  </p>
                 </div>
-
-                {/* Buttons */}
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "1rem",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    disabled={randomLoading}
-                    style={{
-                      background: "#3a3a3a",
-                      color: "#ffffff",
-                      padding: "0.75rem 1.5rem",
-                      borderRadius: "0.5rem",
-                      border: "1px solid #4a4a4a",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
-                      cursor: randomLoading ? "not-allowed" : "pointer",
-                      opacity: randomLoading ? 0.5 : 1,
-                      transition: "background 0.2s",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!randomLoading) e.target.style.background = "#4a4a4a";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!randomLoading) e.target.style.background = "#3a3a3a";
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleGenerateRandomWFH}
-                    disabled={randomLoading || selectedEmployees.length === 0}
-                    style={{
-                      background:
-                        randomLoading || selectedEmployees.length === 0
-                          ? "#9ca3af"
-                          : "#f97316",
-                      color: "#ffffff",
-                      padding: "0.75rem 1.5rem",
-                      borderRadius: "0.5rem",
-                      border: "none",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
-                      cursor:
-                        randomLoading || selectedEmployees.length === 0
-                          ? "not-allowed"
-                          : "pointer",
-                      transition: "background 0.2s",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!randomLoading && selectedEmployees.length > 0)
-                        e.target.style.background = "#ea580c";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!randomLoading && selectedEmployees.length > 0)
-                        e.target.style.background = "#f97316";
-                    }}
-                  >
-                    {randomLoading ? "Generating..." : "Generate Random WFH"}
-                  </button>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}

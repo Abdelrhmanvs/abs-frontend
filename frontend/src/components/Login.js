@@ -20,6 +20,8 @@ const Login = () => {
   const [pwd, setPwd] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errMsg, setErrMsg] = useState("");
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [welcomeUser, setWelcomeUser] = useState("");
 
   useEffect(() => {
     setErrMsg("");
@@ -41,9 +43,17 @@ const Login = () => {
       const accessToken = response?.data?.accessToken;
       const roles = response?.data?.roles;
       const email = response?.data?.email;
+      const fullName = response?.data?.fullName || email.split("@")[0];
 
-      setAuth({ user: email, roles, accessToken });
-      navigate(from, { replace: true });
+      // Show welcome screen
+      setWelcomeUser(fullName);
+      setShowWelcome(true);
+
+      // Set auth after a delay and navigate
+      setTimeout(() => {
+        setAuth({ user: email, roles, accessToken });
+        navigate(from, { replace: true });
+      }, 2000);
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");
@@ -65,134 +75,499 @@ const Login = () => {
     localStorage.setItem("persist", persist);
   }, [persist]);
 
-  return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4"
-      style={{
-        background: "#1a1a1a",
-      }}
-    >
+  // Welcome screen with smiley face
+  if (showWelcome) {
+    return (
       <div
-        className="w-full max-w-lg rounded-2xl p-10"
         style={{
-          background: "#2d2d2d",
+          background: "#2D2D31",
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "1rem",
         }}
       >
-        {/* Logo/Header */}
-        <div className="text-center mb-8">
-          <img
-            src={absLogo}
-            alt="ABS Logo"
-            className="mx-auto mb-4"
-            style={{ height: "80px", width: "auto" }}
-          />
-          <h2 className="text-xl font-semibold text-white">Dev Team Portal</h2>
-        </div>
-
-        {errMsg && (
-          <div className="mb-6 p-3 rounded-lg bg-red-500 bg-opacity-10 border border-red-500">
-            <p className="text-red-400 text-sm text-center">{errMsg}</p>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email Field */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium mb-2 text-white"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              ref={userRef}
-              autoComplete="off"
-              {...userAttribs}
-              placeholder="Enter your email"
-              className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+        <div
+          className="animate-scaleIn"
+          style={{
+            textAlign: "center",
+            padding: "3rem",
+          }}
+        >
+          {/* Animated Smiley Face - CSS Design */}
+          <div
+            className="animate-float"
+            style={{
+              width: "120px",
+              height: "120px",
+              borderRadius: "50%",
+              background: "linear-gradient(135deg, #EA8303 0%, #f5a623 100%)",
+              margin: "0 auto 2rem",
+              position: "relative",
+              boxShadow: "0 10px 40px rgba(234, 131, 3, 0.4)",
+            }}
+          >
+            {/* Left Eye */}
+            <div
               style={{
-                background: "#3a3a3a",
-                borderColor: "#4a4a4a",
-                color: "#ffffff",
+                position: "absolute",
+                top: "35px",
+                left: "30px",
+                width: "14px",
+                height: "14px",
+                borderRadius: "50%",
+                background: "#1E1E1E",
+              }}
+            />
+            {/* Right Eye */}
+            <div
+              style={{
+                position: "absolute",
+                top: "35px",
+                right: "30px",
+                width: "14px",
+                height: "14px",
+                borderRadius: "50%",
+                background: "#1E1E1E",
+              }}
+            />
+            {/* Smile */}
+            <div
+              style={{
+                position: "absolute",
+                bottom: "30px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: "50px",
+                height: "25px",
+                borderRadius: "0 0 50px 50px",
+                border: "4px solid #1E1E1E",
+                borderTop: "none",
+                background: "transparent",
               }}
             />
           </div>
 
+          {/* Welcome Text */}
+          <h1
+            className="animate-fadeInUp"
+            style={{
+              color: "#FFFFFF",
+              fontSize: "2rem",
+              fontWeight: "700",
+              marginBottom: "0.5rem",
+              animationDelay: "0.2s",
+              animationFillMode: "both",
+            }}
+          >
+            Welcome Back!
+          </h1>
+
+          {/* Username */}
+          <p
+            className="animate-fadeInUp"
+            style={{
+              color: "#EA8303",
+              fontSize: "1.5rem",
+              fontWeight: "600",
+              margin: 0,
+              animationDelay: "0.4s",
+              animationFillMode: "both",
+            }}
+          >
+            {welcomeUser}
+          </p>
+
+          {/* Loading dots */}
+          <div
+            className="animate-fadeIn"
+            style={{
+              marginTop: "2rem",
+              display: "flex",
+              justifyContent: "center",
+              gap: "0.5rem",
+              animationDelay: "0.6s",
+              animationFillMode: "both",
+            }}
+          >
+            <div className="loading-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        background: "#2D2D31",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "2rem",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Background decorative elements */}
+      <div
+        style={{
+          position: "absolute",
+          top: "-20%",
+          right: "-10%",
+          width: "500px",
+          height: "500px",
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle, rgba(234, 131, 3, 0.08) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          bottom: "-20%",
+          left: "-10%",
+          width: "400px",
+          height: "400px",
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle, rgba(234, 131, 3, 0.05) 0%, transparent 70%)",
+          pointerEvents: "none",
+        }}
+      />
+
+      <div
+        className="animate-scaleIn"
+        style={{
+          background: "#1E1E1E",
+          width: "100%",
+          maxWidth: "440px",
+          borderRadius: "16px",
+          padding: "2.5rem",
+          border: "1px solid rgba(255, 255, 255, 0.06)",
+          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        {/* Logo/Header */}
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "1.5rem",
+            }}
+          >
+            <img
+              src={absLogo}
+              alt="ABS Logo"
+              className="animate-fadeIn"
+              style={{ height: "60px", width: "auto" }}
+            />
+          </div>
+          <h1
+            style={{
+              fontSize: "1.5rem",
+              fontWeight: "700",
+              color: "#FFFFFF",
+              marginBottom: "0.5rem",
+              letterSpacing: "-0.025em",
+            }}
+          >
+            Welcome Back
+          </h1>
+          <p
+            style={{
+              color: "rgba(255, 255, 255, 0.5)",
+              fontSize: "0.875rem",
+              margin: 0,
+            }}
+          >
+            Sign in to access the Dev Team Portal
+          </p>
+        </div>
+
+        {/* Error Message */}
+        {errMsg && (
+          <div
+            className="animate-slideDown"
+            style={{
+              background: "rgba(239, 68, 68, 0.1)",
+              border: "1px solid rgba(239, 68, 68, 0.3)",
+              borderRadius: "10px",
+              padding: "0.875rem 1rem",
+              marginBottom: "1.5rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.75rem",
+            }}
+          >
+            <i
+              className="fas fa-exclamation-circle"
+              style={{ color: "#ef4444" }}
+            ></i>
+            <p style={{ color: "#ef4444", fontSize: "0.875rem", margin: 0 }}>
+              {errMsg}
+            </p>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          {/* Email Field */}
+          <div style={{ marginBottom: "1.25rem" }}>
+            <label
+              htmlFor="email"
+              style={{
+                display: "block",
+                color: "rgba(255, 255, 255, 0.7)",
+                fontSize: "0.8125rem",
+                fontWeight: "500",
+                marginBottom: "0.5rem",
+              }}
+            >
+              Email Address
+            </label>
+            <div style={{ position: "relative" }}>
+              <div
+                style={{
+                  position: "absolute",
+                  left: "1rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "rgba(255, 255, 255, 0.4)",
+                  pointerEvents: "none",
+                }}
+              >
+                <i
+                  className="fas fa-envelope"
+                  style={{ fontSize: "0.875rem" }}
+                ></i>
+              </div>
+              <input
+                type="email"
+                id="email"
+                ref={userRef}
+                autoComplete="off"
+                {...userAttribs}
+                placeholder="Enter your email"
+                style={{
+                  width: "100%",
+                  background: "rgba(255, 255, 255, 0.04)",
+                  color: "#FFFFFF",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "10px",
+                  padding: "0.875rem 1rem 0.875rem 2.75rem",
+                  fontSize: "0.875rem",
+                  outline: "none",
+                  transition: "all 0.2s ease",
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#EA8303";
+                  e.target.style.boxShadow = "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                  e.target.style.boxShadow = "none";
+                }}
+              />
+            </div>
+          </div>
+
           {/* Password Field */}
-          <div>
+          <div style={{ marginBottom: "1.25rem" }}>
             <label
               htmlFor="password"
-              className="block text-sm font-medium mb-2 text-white"
+              style={{
+                display: "block",
+                color: "rgba(255, 255, 255, 0.7)",
+                fontSize: "0.8125rem",
+                fontWeight: "500",
+                marginBottom: "0.5rem",
+              }}
             >
               Password
             </label>
-            <div className="relative">
+            <div style={{ position: "relative" }}>
+              <div
+                style={{
+                  position: "absolute",
+                  left: "1rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "rgba(255, 255, 255, 0.4)",
+                  pointerEvents: "none",
+                }}
+              >
+                <i className="fas fa-lock" style={{ fontSize: "0.875rem" }}></i>
+              </div>
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 onChange={(e) => setPwd(e.target.value)}
                 value={pwd}
-                className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
                 style={{
-                  background: "#3a3a3a",
-                  borderColor: "#4a4a4a",
-                  color: "#ffffff",
+                  width: "100%",
+                  background: "rgba(255, 255, 255, 0.04)",
+                  color: "#FFFFFF",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "10px",
+                  padding: "0.875rem 3rem 0.875rem 2.75rem",
+                  fontSize: "0.875rem",
+                  outline: "none",
+                  transition: "all 0.2s ease",
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#EA8303";
+                  e.target.style.boxShadow = "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                  e.target.style.boxShadow = "none";
                 }}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                style={{ color: "#9ca3af" }}
+                style={{
+                  position: "absolute",
+                  right: "1rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "transparent",
+                  border: "none",
+                  color: "rgba(255, 255, 255, 0.4)",
+                  cursor: "pointer",
+                  padding: "0.25rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "color 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#EA8303";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "rgba(255, 255, 255, 0.4)";
+                }}
               >
                 <i
                   className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"}`}
+                  style={{ fontSize: "0.875rem" }}
                 ></i>
               </button>
             </div>
           </div>
 
           {/* Remember Me Checkbox */}
-          <div className="flex items-center">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "1.5rem",
+            }}
+          >
             <input
               type="checkbox"
               id="persist"
               checked={persist}
               onChange={togglePersist}
-              className="w-4 h-4 rounded border-gray-600 bg-gray-700 focus:ring-2 focus:ring-orange-500 cursor-pointer"
               style={{
-                accentColor: "#f97316",
+                width: "18px",
+                height: "18px",
+                borderRadius: "4px",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                background: persist ? "#EA8303" : "rgba(255, 255, 255, 0.04)",
+                cursor: "pointer",
+                accentColor: "#EA8303",
               }}
             />
             <label
               htmlFor="persist"
-              className="ml-2 text-sm text-gray-300 cursor-pointer select-none"
+              style={{
+                marginLeft: "0.75rem",
+                fontSize: "0.875rem",
+                color: "rgba(255, 255, 255, 0.6)",
+                cursor: "pointer",
+                userSelect: "none",
+              }}
             >
-              Remember me
+              Keep me signed in
             </label>
           </div>
 
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full py-3 rounded-lg text-white font-semibold transition-all duration-200 flex items-center justify-center gap-2"
             style={{
-              background: "#f97316",
+              width: "100%",
+              background:
+                "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)",
+              backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)",
+              color: "#FFFFFF",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              borderRadius: "12px",
+              padding: "0.875rem 1.5rem",
+              fontSize: "0.9375rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              transition: "all 0.3s ease",
+              boxShadow:
+                "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.5rem",
             }}
             onMouseEnter={(e) => {
-              e.target.style.background = "#ea580c";
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, rgba(234, 131, 3, 1) 0%, rgba(234, 131, 3, 0.85) 100%)";
+              e.currentTarget.style.boxShadow =
+                "0 6px 20px rgba(234, 131, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+              e.currentTarget.style.transform = "translateY(-2px)";
             }}
             onMouseLeave={(e) => {
-              e.target.style.background = "#f97316";
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)";
+              e.currentTarget.style.boxShadow =
+                "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+              e.currentTarget.style.transform = "translateY(0)";
             }}
           >
             <i className="fas fa-sign-in-alt"></i>
-            Login
+            Sign In
           </button>
         </form>
+
+        {/* Footer */}
+        <div
+          style={{
+            marginTop: "2rem",
+            paddingTop: "1.5rem",
+            borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+            textAlign: "center",
+          }}
+        >
+          <p
+            style={{
+              color: "rgba(255, 255, 255, 0.4)",
+              fontSize: "0.75rem",
+              margin: 0,
+            }}
+          >
+            ABS Development Team Portal
+          </p>
+        </div>
       </div>
     </div>
   );

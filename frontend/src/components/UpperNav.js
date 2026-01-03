@@ -42,21 +42,22 @@ const UpperNav = () => {
       <div
         style={{
           width: "235px",
-          background: "#2d2d2d",
-          borderRight: "1px solid #404040",
+          background: "#1E1E1E",
+          borderRight: "1px solid rgba(255, 255, 255, 0.08)",
           display: "flex",
           flexDirection: "column",
           position: "fixed",
           height: "100vh",
           left: 0,
           top: 0,
+          boxShadow: "2px 0 8px rgba(0, 0, 0, 0.3)",
         }}
       >
         {/* Logo Section */}
         <div
           style={{
             padding: "1.5rem 1rem",
-            borderBottom: "1px solid #404040",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
           }}
         >
           <div
@@ -84,13 +85,15 @@ const UpperNav = () => {
               alignItems: "center",
               gap: "0.75rem",
               padding: "0.75rem 1.5rem",
-              color: isActive ? "#f97316" : "#9ca3af",
+              color: isActive ? "#EA8303" : "rgba(255, 255, 255, 0.5)",
               textDecoration: "none",
-              background: isActive ? "#3a3a3a" : "transparent",
+              background: isActive ? "rgba(234, 131, 3, 0.12)" : "transparent",
               borderLeft: isActive
-                ? "3px solid #f97316"
+                ? "3px solid #EA8303"
                 : "3px solid transparent",
               transition: "all 0.2s",
+              fontSize: "0.875rem",
+              fontWeight: "500",
             })}
           >
             <i className="fas fa-home" style={{ fontSize: "1.125rem" }}></i>
@@ -104,13 +107,15 @@ const UpperNav = () => {
               alignItems: "center",
               gap: "0.75rem",
               padding: "0.75rem 1.5rem",
-              color: isActive ? "#f97316" : "#9ca3af",
+              color: isActive ? "#EA8303" : "rgba(255, 255, 255, 0.5)",
               textDecoration: "none",
-              background: isActive ? "#3a3a3a" : "transparent",
+              background: isActive ? "rgba(234, 131, 3, 0.12)" : "transparent",
               borderLeft: isActive
-                ? "3px solid #f97316"
+                ? "3px solid #EA8303"
                 : "3px solid transparent",
               transition: "all 0.2s",
+              fontSize: "0.875rem",
+              fontWeight: "500",
             })}
           >
             <i className="fas fa-list" style={{ fontSize: "1.125rem" }}></i>
@@ -127,13 +132,17 @@ const UpperNav = () => {
                   alignItems: "center",
                   gap: "0.75rem",
                   padding: "0.75rem 1.5rem",
-                  color: isActive ? "#f97316" : "#9ca3af",
+                  color: isActive ? "#EA8303" : "rgba(255, 255, 255, 0.5)",
                   textDecoration: "none",
-                  background: isActive ? "#3a3a3a" : "transparent",
+                  background: isActive
+                    ? "rgba(234, 131, 3, 0.12)"
+                    : "transparent",
                   borderLeft: isActive
-                    ? "3px solid #f97316"
+                    ? "3px solid #EA8303"
                     : "3px solid transparent",
                   transition: "all 0.2s",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
                 })}
               >
                 <i
@@ -150,13 +159,17 @@ const UpperNav = () => {
                   alignItems: "center",
                   gap: "0.75rem",
                   padding: "0.75rem 1.5rem",
-                  color: isActive ? "#f97316" : "#9ca3af",
+                  color: isActive ? "#EA8303" : "rgba(255, 255, 255, 0.5)",
                   textDecoration: "none",
-                  background: isActive ? "#3a3a3a" : "transparent",
+                  background: isActive
+                    ? "rgba(234, 131, 3, 0.12)"
+                    : "transparent",
                   borderLeft: isActive
-                    ? "3px solid #f97316"
+                    ? "3px solid #EA8303"
                     : "3px solid transparent",
                   transition: "all 0.2s",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
                 })}
               >
                 <i
@@ -173,13 +186,17 @@ const UpperNav = () => {
                   alignItems: "center",
                   gap: "0.75rem",
                   padding: "0.75rem 1.5rem",
-                  color: isActive ? "#f97316" : "#9ca3af",
+                  color: isActive ? "#EA8303" : "rgba(255, 255, 255, 0.5)",
                   textDecoration: "none",
-                  background: isActive ? "#3a3a3a" : "transparent",
+                  background: isActive
+                    ? "rgba(234, 131, 3, 0.12)"
+                    : "transparent",
                   borderLeft: isActive
-                    ? "3px solid #f97316"
+                    ? "3px solid #EA8303"
                     : "3px solid transparent",
                   transition: "all 0.2s",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
                 })}
               >
                 <i className="fas fa-home" style={{ fontSize: "1.125rem" }}></i>
@@ -190,7 +207,7 @@ const UpperNav = () => {
         </nav>
 
         {/* User Profile & Logout Section */}
-        <div style={{ borderTop: "1px solid #404040" }}>
+        <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)" }}>
           <div
             style={{
               padding: "1rem 1.5rem",
@@ -203,13 +220,13 @@ const UpperNav = () => {
               style={{
                 width: "40px",
                 height: "40px",
-                borderRadius: "50%",
-                background: "#f97316",
+                borderRadius: "10px",
+                background: "rgba(234, 131, 3, 0.15)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#ffffff",
-                fontWeight: "bold",
+                color: "#EA8303",
+                fontWeight: "600",
                 fontSize: "0.875rem",
               }}
             >
@@ -222,9 +239,9 @@ const UpperNav = () => {
             <div style={{ flex: 1 }}>
               <div
                 style={{
-                  color: "#ffffff",
+                  color: "#FFFFFF",
                   fontSize: "0.875rem",
-                  fontWeight: "600",
+                  fontWeight: "500",
                 }}
               >
                 {userProfile?.fullName ||
@@ -232,7 +249,12 @@ const UpperNav = () => {
                   auth?.user ||
                   "John Doe"}
               </div>
-              <div style={{ color: "#9ca3af", fontSize: "0.75rem" }}>
+              <div
+                style={{
+                  color: "rgba(255, 255, 255, 0.5)",
+                  fontSize: "0.75rem",
+                }}
+              >
                 {isAdmin ? "Admin" : userProfile?.title || "Employee"}
               </div>
             </div>
@@ -246,7 +268,7 @@ const UpperNav = () => {
               alignItems: "center",
               gap: "0.75rem",
               padding: "0.75rem 1.5rem",
-              color: "#9ca3af",
+              color: "rgba(255, 255, 255, 0.5)",
               background: "transparent",
               border: "none",
               cursor: "pointer",
@@ -255,11 +277,11 @@ const UpperNav = () => {
               transition: "all 0.2s",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.color = "#ffffff";
-              e.currentTarget.style.background = "#3a3a3a";
+              e.currentTarget.style.color = "#EA8303";
+              e.currentTarget.style.background = "rgba(234, 131, 3, 0.12)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.color = "#9ca3af";
+              e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)";
               e.currentTarget.style.background = "transparent";
             }}
           >
@@ -280,8 +302,8 @@ const UpperNav = () => {
           position: "fixed",
           top: 0,
           right: 0,
-          background: "#2d2d2d",
-          borderBottom: "1px solid #404040",
+          background: "#2D2D31",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
           padding: "1rem 2rem",
           display: "flex",
           justifyContent: "flex-end",
@@ -293,10 +315,17 @@ const UpperNav = () => {
           style={{
             background: "transparent",
             border: "none",
-            color: "#9ca3af",
+            color: "rgba(255, 255, 255, 0.5)",
             cursor: "pointer",
             fontSize: "1.25rem",
             padding: "0.5rem",
+            transition: "all 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "#EA8303";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)";
           }}
         >
           <i className="fas fa-bell"></i>

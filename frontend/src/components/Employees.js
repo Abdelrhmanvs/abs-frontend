@@ -210,21 +210,15 @@ const AddEmployee = () => {
   };
 
   return (
-    <div
-      style={{
-        marginLeft: "235px",
-        marginTop: "65px",
-        minHeight: "calc(100vh - 65px)",
-        background: "#1a1a1a",
-        padding: "2rem",
-      }}
-    >
+    <div style={{ background: "#2D2D31", minHeight: "100vh", padding: "2rem" }}>
       {/* Employees List Section */}
       <div
+        className="animate-fadeInUp hover-lift"
         style={{
-          background: "#2d2d2d",
-          borderRadius: "0.75rem",
-          padding: "2rem",
+          background: "#1E1E1E",
+          borderRadius: "16px",
+          padding: "1.5rem",
+          border: "1px solid rgba(255, 255, 255, 0.06)",
         }}
       >
         {/* Header */}
@@ -233,54 +227,61 @@ const AddEmployee = () => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: "2rem",
+            marginBottom: "1.5rem",
+            flexWrap: "wrap",
+            gap: "1rem",
           }}
         >
           <div>
             <h1
               style={{
-                fontSize: "1.875rem",
-                fontWeight: "bold",
-                color: "#ffffff",
-                marginBottom: "0.5rem",
+                fontSize: "1.25rem",
+                fontWeight: "600",
+                color: "#FFFFFF",
+                marginBottom: "0.25rem",
               }}
             >
               Employees
             </h1>
-            <p
-              style={{
-                color: "#9ca3af",
-                fontSize: "0.875rem",
-              }}
-            >
-              Manage all employees
-            </p>
           </div>
-          <div style={{ display: "flex", gap: "1rem" }}>
+          <div style={{ display: "flex", gap: "0.75rem" }}>
             <button
               onClick={() => setShowModal(true)}
               style={{
-                background: "#f97316",
-                color: "#ffffff",
-                padding: "0.75rem 1.5rem",
-                borderRadius: "0.5rem",
-                border: "none",
+                background:
+                  "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+                color: "#FFFFFF",
+                padding: "0.625rem 1.25rem",
+                borderRadius: "12px",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
                 fontSize: "0.875rem",
-                fontWeight: "600",
+                fontWeight: "500",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 gap: "0.5rem",
-                transition: "background 0.2s",
+                transition: "all 0.3s ease",
+                boxShadow:
+                  "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
               }}
               onMouseEnter={(e) => {
-                e.target.style.background = "#ea580c";
+                e.currentTarget.style.background =
+                  "linear-gradient(135deg, rgba(234, 131, 3, 1) 0%, rgba(234, 131, 3, 0.85) 100%)";
+                e.currentTarget.style.boxShadow =
+                  "0 6px 20px rgba(234, 131, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+                e.currentTarget.style.transform = "translateY(-2px)";
               }}
               onMouseLeave={(e) => {
-                e.target.style.background = "#f97316";
+                e.currentTarget.style.background =
+                  "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
-              <i className="fas fa-plus"></i>
+              <i className="fas fa-plus" style={{ fontSize: "0.75rem" }}></i>
               Add New Employee
             </button>
           </div>
@@ -298,20 +299,37 @@ const AddEmployee = () => {
             <div
               style={{
                 textAlign: "center",
-                padding: "2rem",
-                color: "#9ca3af",
+                padding: "3rem",
+                color: "rgba(255, 255, 255, 0.5)",
               }}
             >
+              <i
+                className="fas fa-spinner fa-spin"
+                style={{
+                  fontSize: "1.5rem",
+                  marginBottom: "0.75rem",
+                  display: "block",
+                }}
+              ></i>
               Loading employees...
             </div>
           ) : employees.length === 0 ? (
             <div
               style={{
                 textAlign: "center",
-                padding: "2rem",
-                color: "#9ca3af",
+                padding: "3rem",
+                color: "rgba(255, 255, 255, 0.5)",
               }}
             >
+              <i
+                className="fas fa-users"
+                style={{
+                  fontSize: "2rem",
+                  marginBottom: "0.75rem",
+                  display: "block",
+                  opacity: 0.5,
+                }}
+              ></i>
               No employees found
             </div>
           ) : (
@@ -322,15 +340,17 @@ const AddEmployee = () => {
               }}
             >
               <thead>
-                <tr style={{ borderBottom: "1px solid #404040" }}>
+                <tr style={{ background: "rgba(255, 255, 255, 0.03)" }}>
                   <th
                     style={{
                       textAlign: "left",
-                      padding: "1rem",
-                      color: "#9ca3af",
+                      padding: "0.875rem 1rem",
+                      color: "rgba(255, 255, 255, 0.5)",
                       fontWeight: "500",
-                      fontSize: "0.875rem",
+                      fontSize: "0.75rem",
                       whiteSpace: "nowrap",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
                     }}
                   >
                     Full Name
@@ -338,11 +358,13 @@ const AddEmployee = () => {
                   <th
                     style={{
                       textAlign: "left",
-                      padding: "1rem",
-                      color: "#9ca3af",
+                      padding: "0.875rem 1rem",
+                      color: "rgba(255, 255, 255, 0.5)",
                       fontWeight: "500",
-                      fontSize: "0.875rem",
+                      fontSize: "0.75rem",
                       whiteSpace: "nowrap",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
                     }}
                   >
                     Employee Code
@@ -350,11 +372,13 @@ const AddEmployee = () => {
                   <th
                     style={{
                       textAlign: "left",
-                      padding: "1rem",
-                      color: "#9ca3af",
+                      padding: "0.875rem 1rem",
+                      color: "rgba(255, 255, 255, 0.5)",
                       fontWeight: "500",
-                      fontSize: "0.875rem",
+                      fontSize: "0.75rem",
                       whiteSpace: "nowrap",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
                     }}
                   >
                     Email
@@ -362,11 +386,13 @@ const AddEmployee = () => {
                   <th
                     style={{
                       textAlign: "left",
-                      padding: "1rem",
-                      color: "#9ca3af",
+                      padding: "0.875rem 1rem",
+                      color: "rgba(255, 255, 255, 0.5)",
                       fontWeight: "500",
-                      fontSize: "0.875rem",
+                      fontSize: "0.75rem",
                       whiteSpace: "nowrap",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
                     }}
                   >
                     Phone Number
@@ -374,11 +400,13 @@ const AddEmployee = () => {
                   <th
                     style={{
                       textAlign: "left",
-                      padding: "1rem",
-                      color: "#9ca3af",
+                      padding: "0.875rem 1rem",
+                      color: "rgba(255, 255, 255, 0.5)",
                       fontWeight: "500",
-                      fontSize: "0.875rem",
+                      fontSize: "0.75rem",
                       whiteSpace: "nowrap",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
                     }}
                   >
                     Job Position
@@ -386,11 +414,13 @@ const AddEmployee = () => {
                   <th
                     style={{
                       textAlign: "left",
-                      padding: "1rem",
-                      color: "#9ca3af",
+                      padding: "0.875rem 1rem",
+                      color: "rgba(255, 255, 255, 0.5)",
                       fontWeight: "500",
-                      fontSize: "0.875rem",
+                      fontSize: "0.75rem",
                       whiteSpace: "nowrap",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
                     }}
                   >
                     Title
@@ -398,11 +428,13 @@ const AddEmployee = () => {
                   <th
                     style={{
                       textAlign: "left",
-                      padding: "1rem",
-                      color: "#9ca3af",
+                      padding: "0.875rem 1rem",
+                      color: "rgba(255, 255, 255, 0.5)",
                       fontWeight: "500",
-                      fontSize: "0.875rem",
+                      fontSize: "0.75rem",
                       whiteSpace: "nowrap",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
                     }}
                   >
                     Branch
@@ -410,11 +442,13 @@ const AddEmployee = () => {
                   <th
                     style={{
                       textAlign: "center",
-                      padding: "1rem",
-                      color: "#9ca3af",
+                      padding: "0.875rem 1rem",
+                      color: "rgba(255, 255, 255, 0.5)",
                       fontWeight: "500",
-                      fontSize: "0.875rem",
+                      fontSize: "0.75rem",
                       whiteSpace: "nowrap",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
                     }}
                   >
                     Actions
@@ -422,16 +456,30 @@ const AddEmployee = () => {
                 </tr>
               </thead>
               <tbody>
-                {employees.map((employee) => (
+                {employees.map((employee, index) => (
                   <tr
                     key={employee._id}
-                    style={{ borderBottom: "1px solid #404040" }}
+                    style={{
+                      borderBottom:
+                        index < employees.length - 1
+                          ? "1px solid rgba(255, 255, 255, 0.06)"
+                          : "none",
+                      transition: "background 0.15s",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background =
+                        "rgba(255, 255, 255, 0.02)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "transparent";
+                    }}
                   >
                     <td
                       style={{
                         padding: "1rem",
-                        color: "#ffffff",
+                        color: "#FFFFFF",
                         fontSize: "0.875rem",
+                        fontWeight: "500",
                       }}
                     >
                       {employee.fullName || employee.username || "-"}
@@ -439,7 +487,7 @@ const AddEmployee = () => {
                     <td
                       style={{
                         padding: "1rem",
-                        color: "#ffffff",
+                        color: "rgba(255, 255, 255, 0.8)",
                         fontSize: "0.875rem",
                       }}
                     >
@@ -448,7 +496,7 @@ const AddEmployee = () => {
                     <td
                       style={{
                         padding: "1rem",
-                        color: "#ffffff",
+                        color: "rgba(255, 255, 255, 0.8)",
                         fontSize: "0.875rem",
                       }}
                     >
@@ -457,7 +505,7 @@ const AddEmployee = () => {
                     <td
                       style={{
                         padding: "1rem",
-                        color: "#ffffff",
+                        color: "rgba(255, 255, 255, 0.8)",
                         fontSize: "0.875rem",
                       }}
                     >
@@ -466,7 +514,7 @@ const AddEmployee = () => {
                     <td
                       style={{
                         padding: "1rem",
-                        color: "#ffffff",
+                        color: "rgba(255, 255, 255, 0.8)",
                         fontSize: "0.875rem",
                       }}
                     >
@@ -475,7 +523,7 @@ const AddEmployee = () => {
                     <td
                       style={{
                         padding: "1rem",
-                        color: "#ffffff",
+                        color: "rgba(255, 255, 255, 0.8)",
                         fontSize: "0.875rem",
                       }}
                     >
@@ -484,7 +532,7 @@ const AddEmployee = () => {
                     <td
                       style={{
                         padding: "1rem",
-                        color: "#ffffff",
+                        color: "rgba(255, 255, 255, 0.8)",
                         fontSize: "0.875rem",
                       }}
                     >
@@ -506,51 +554,63 @@ const AddEmployee = () => {
                         <button
                           onClick={() => handleEdit(employee)}
                           style={{
-                            background: "#3b82f6",
-                            color: "#ffffff",
+                            background: "rgba(59, 130, 246, 0.15)",
+                            color: "#3b82f6",
                             border: "none",
-                            borderRadius: "0.375rem",
+                            borderRadius: "8px",
                             padding: "0.5rem 0.75rem",
-                            fontSize: "0.875rem",
+                            fontSize: "0.8125rem",
                             cursor: "pointer",
-                            transition: "background 0.2s",
+                            transition: "all 0.2s",
                             display: "inline-flex",
                             alignItems: "center",
-                            gap: "0.5rem",
+                            gap: "0.375rem",
                           }}
                           onMouseEnter={(e) => {
-                            e.target.style.background = "#2563eb";
+                            e.currentTarget.style.background = "#3b82f6";
+                            e.currentTarget.style.color = "#FFFFFF";
                           }}
                           onMouseLeave={(e) => {
-                            e.target.style.background = "#3b82f6";
+                            e.currentTarget.style.background =
+                              "rgba(59, 130, 246, 0.15)";
+                            e.currentTarget.style.color = "#3b82f6";
                           }}
                         >
-                          <i className="fas fa-edit"></i>
+                          <i
+                            className="fas fa-edit"
+                            style={{ fontSize: "0.75rem" }}
+                          ></i>
                           Edit
                         </button>
                         <button
                           onClick={() => handleDelete(employee._id)}
                           style={{
-                            background: "#ef4444",
-                            color: "#ffffff",
+                            background: "rgba(239, 68, 68, 0.15)",
+                            color: "#ef4444",
                             border: "none",
-                            borderRadius: "0.375rem",
+                            borderRadius: "8px",
                             padding: "0.5rem 0.75rem",
-                            fontSize: "0.875rem",
+                            fontSize: "0.8125rem",
                             cursor: "pointer",
-                            transition: "background 0.2s",
+                            transition: "all 0.2s",
                             display: "inline-flex",
                             alignItems: "center",
-                            gap: "0.5rem",
+                            gap: "0.375rem",
                           }}
                           onMouseEnter={(e) => {
-                            e.target.style.background = "#dc2626";
+                            e.currentTarget.style.background = "#ef4444";
+                            e.currentTarget.style.color = "#FFFFFF";
                           }}
                           onMouseLeave={(e) => {
-                            e.target.style.background = "#ef4444";
+                            e.currentTarget.style.background =
+                              "rgba(239, 68, 68, 0.15)";
+                            e.currentTarget.style.color = "#ef4444";
                           }}
                         >
-                          <i className="fas fa-trash"></i>
+                          <i
+                            className="fas fa-trash"
+                            style={{ fontSize: "0.75rem" }}
+                          ></i>
                           Delete
                         </button>
                       </div>
@@ -566,18 +626,20 @@ const AddEmployee = () => {
       {/* Add Employee Modal */}
       {showModal && (
         <div
+          className="modal-animate-overlay"
           style={{
             position: "fixed",
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            background: "rgba(0, 0, 0, 0.7)",
+            background: "rgba(0, 0, 0, 0.8)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             zIndex: 1000,
             padding: "2rem",
+            backdropFilter: "blur(4px)",
           }}
           onClick={(e) => {
             if (e.target === e.currentTarget) {
@@ -586,444 +648,625 @@ const AddEmployee = () => {
           }}
         >
           <div
+            className="modal-animate-content"
             style={{
-              background: "#2d2d2d",
-              borderRadius: "0.75rem",
-              padding: "2rem",
-              maxWidth: "600px",
+              background: "#1E1E1E",
+              borderRadius: "16px",
+              maxWidth: "500px",
               width: "100%",
               maxHeight: "90vh",
-              overflowY: "auto",
+              overflow: "hidden",
+              border: "1px solid rgba(255, 255, 255, 0.06)",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
             }}
           >
+            {/* Modal Header */}
             <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                marginBottom: "1.5rem",
+                padding: "1.5rem 2rem",
+                borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+                background:
+                  "linear-gradient(to right, rgba(234, 131, 3, 0.1), transparent)",
               }}
             >
-              <h2
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "bold",
-                  color: "#ffffff",
-                }}
-              >
-                {editingEmployeeId ? "Edit Employee" : "Add New Employee"}
-              </h2>
+              <div>
+                <h2
+                  style={{
+                    fontSize: "1.25rem",
+                    fontWeight: "600",
+                    color: "#FFFFFF",
+                    marginBottom: "0.25rem",
+                  }}
+                >
+                  {editingEmployeeId ? "Edit Employee" : "Add New Employee"}
+                </h2>
+                <p
+                  style={{
+                    color: "rgba(255, 255, 255, 0.5)",
+                    fontSize: "0.875rem",
+                    margin: 0,
+                  }}
+                >
+                  {editingEmployeeId
+                    ? "Update employee information"
+                    : "Add a new team member"}
+                </p>
+              </div>
               <button
                 onClick={handleCancel}
                 style={{
-                  background: "transparent",
+                  background: "rgba(255, 255, 255, 0.06)",
                   border: "none",
-                  color: "#9ca3af",
-                  fontSize: "1.5rem",
+                  color: "rgba(255, 255, 255, 0.5)",
+                  borderRadius: "8px",
                   cursor: "pointer",
                   padding: "0",
-                  width: "30px",
-                  height: "30px",
+                  width: "2rem",
+                  height: "2rem",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  transition: "all 0.2s",
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.color = "#ffffff";
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
+                  e.currentTarget.style.color = "#FFFFFF";
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.color = "#9ca3af";
+                  e.currentTarget.style.background =
+                    "rgba(255, 255, 255, 0.06)";
+                  e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)";
                 }}
               >
                 <i className="fas fa-times"></i>
               </button>
             </div>
 
-            {/* Error Message */}
-            {error && (
-              <div
-                style={{
-                  background: "rgba(239, 68, 68, 0.1)",
-                  border: "1px solid #ef4444",
-                  color: "#ef4444",
-                  padding: "0.75rem 1rem",
-                  borderRadius: "0.5rem",
-                  marginBottom: "1.5rem",
-                  fontSize: "0.875rem",
-                }}
-              >
-                {error}
-              </div>
-            )}
-
-            {/* Success Message */}
-            {success && (
-              <div
-                style={{
-                  background: "rgba(34, 197, 94, 0.1)",
-                  border: "1px solid #22c55e",
-                  color: "#22c55e",
-                  padding: "0.75rem 1rem",
-                  borderRadius: "0.5rem",
-                  marginBottom: "1.5rem",
-                  fontSize: "0.875rem",
-                }}
-              >
-                {success}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit}>
-              {/* Full Name */}
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label
-                  htmlFor="fullName"
+            {/* Modal Body */}
+            <div style={{ maxHeight: "calc(90vh - 100px)", overflowY: "auto" }}>
+              {/* Error Message */}
+              {error && (
+                <div
                   style={{
-                    display: "block",
-                    color: "#ffffff",
+                    background: "rgba(239, 68, 68, 0.1)",
+                    border: "1px solid rgba(239, 68, 68, 0.3)",
+                    color: "#ef4444",
+                    padding: "1rem 1.25rem",
+                    borderRadius: "12px",
+                    margin: "1.5rem 2rem 0",
                     fontSize: "0.875rem",
-                    fontWeight: "500",
-                    marginBottom: "0.5rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.75rem",
                   }}
                 >
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  id="fullName"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  placeholder="Enter full name"
-                  style={{
-                    width: "100%",
-                    background: "#3a3a3a",
-                    color: "#ffffff",
-                    border: "1px solid #4a4a4a",
-                    borderRadius: "0.5rem",
-                    padding: "0.75rem 1rem",
-                    fontSize: "0.875rem",
-                    outline: "none",
-                  }}
-                />
-              </div>
+                  <i className="fas fa-exclamation-circle"></i>
+                  {error}
+                </div>
+              )}
 
-              {/* Full Name Arabic */}
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label
-                  htmlFor="fullNameArabic"
+              {/* Success Message */}
+              {success && (
+                <div
                   style={{
-                    display: "block",
-                    color: "#ffffff",
+                    background: "rgba(16, 185, 129, 0.1)",
+                    border: "1px solid rgba(16, 185, 129, 0.3)",
+                    color: "#10b981",
+                    padding: "1rem 1.25rem",
+                    borderRadius: "12px",
+                    margin: "1.5rem 2rem 0",
                     fontSize: "0.875rem",
-                    fontWeight: "500",
-                    marginBottom: "0.5rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.75rem",
                   }}
                 >
-                  Full Name (Arabic) *
-                </label>
-                <input
-                  type="text"
-                  id="fullNameArabic"
-                  name="fullNameArabic"
-                  value={formData.fullNameArabic}
-                  onChange={handleChange}
-                  placeholder="أدخل الاسم بالعربية"
-                  style={{
-                    width: "100%",
-                    background: "#3a3a3a",
-                    color: "#ffffff",
-                    border: "1px solid #4a4a4a",
-                    borderRadius: "0.5rem",
-                    padding: "0.75rem 1rem",
-                    fontSize: "0.875rem",
-                    outline: "none",
-                  }}
-                />
-              </div>
+                  <i className="fas fa-check-circle"></i>
+                  {success}
+                </div>
+              )}
 
-              {/* Email */}
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label
-                  htmlFor="email"
-                  style={{
-                    display: "block",
-                    color: "#ffffff",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Enter email address"
-                  style={{
-                    width: "100%",
-                    background: "#3a3a3a",
-                    color: "#ffffff",
-                    border: "1px solid #4a4a4a",
-                    borderRadius: "0.5rem",
-                    padding: "0.75rem 1rem",
-                    fontSize: "0.875rem",
-                    outline: "none",
-                  }}
-                />
-              </div>
+              <form onSubmit={handleSubmit} style={{ padding: "2rem" }}>
+                {/* Full Name */}
+                <div style={{ marginBottom: "1.25rem" }}>
+                  <label
+                    htmlFor="fullName"
+                    style={{
+                      display: "block",
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "0.8125rem",
+                      fontWeight: "500",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    placeholder="Enter full name"
+                    style={{
+                      width: "100%",
+                      background: "rgba(255, 255, 255, 0.04)",
+                      color: "#FFFFFF",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "10px",
+                      padding: "0.75rem 1rem",
+                      fontSize: "0.875rem",
+                      outline: "none",
+                      transition: "all 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#EA8303";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
 
-              {/* Phone Number */}
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label
-                  htmlFor="phoneNumber"
-                  style={{
-                    display: "block",
-                    color: "#ffffff",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Phone Number *
-                </label>
-                <input
-                  type="tel"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                  placeholder="Enter phone number"
-                  style={{
-                    width: "100%",
-                    background: "#3a3a3a",
-                    color: "#ffffff",
-                    border: "1px solid #4a4a4a",
-                    borderRadius: "0.5rem",
-                    padding: "0.75rem 1rem",
-                    fontSize: "0.875rem",
-                    outline: "none",
-                  }}
-                />
-              </div>
+                {/* Full Name Arabic */}
+                <div style={{ marginBottom: "1.25rem" }}>
+                  <label
+                    htmlFor="fullNameArabic"
+                    style={{
+                      display: "block",
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "0.8125rem",
+                      fontWeight: "500",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Full Name (Arabic) *
+                  </label>
+                  <input
+                    type="text"
+                    id="fullNameArabic"
+                    name="fullNameArabic"
+                    value={formData.fullNameArabic}
+                    onChange={handleChange}
+                    placeholder="أدخل الاسم بالعربية"
+                    style={{
+                      width: "100%",
+                      background: "rgba(255, 255, 255, 0.04)",
+                      color: "#FFFFFF",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "10px",
+                      padding: "0.75rem 1rem",
+                      fontSize: "0.875rem",
+                      outline: "none",
+                      transition: "all 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#EA8303";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
 
-              {/* Employee Code */}
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label
-                  htmlFor="employeeCode"
-                  style={{
-                    display: "block",
-                    color: "#ffffff",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Employee Code *
-                </label>
-                <input
-                  type="text"
-                  id="employeeCode"
-                  name="employeeCode"
-                  value={formData.employeeCode}
-                  onChange={handleChange}
-                  placeholder="Enter employee code"
-                  style={{
-                    width: "100%",
-                    background: "#3a3a3a",
-                    color: "#ffffff",
-                    border: "1px solid #4a4a4a",
-                    borderRadius: "0.5rem",
-                    padding: "0.75rem 1rem",
-                    fontSize: "0.875rem",
-                    outline: "none",
-                  }}
-                />
-              </div>
+                {/* Email */}
+                <div style={{ marginBottom: "1.25rem" }}>
+                  <label
+                    htmlFor="email"
+                    style={{
+                      display: "block",
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "0.8125rem",
+                      fontWeight: "500",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Enter email address"
+                    style={{
+                      width: "100%",
+                      background: "rgba(255, 255, 255, 0.04)",
+                      color: "#FFFFFF",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "10px",
+                      padding: "0.75rem 1rem",
+                      fontSize: "0.875rem",
+                      outline: "none",
+                      transition: "all 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#EA8303";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
 
-              {/* Fingerprint */}
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label
-                  htmlFor="fingerprint"
-                  style={{
-                    display: "block",
-                    color: "#ffffff",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Fingerprint *
-                </label>
-                <input
-                  type="text"
-                  id="fingerprint"
-                  name="fingerprint"
-                  value={formData.fingerprint}
-                  onChange={handleChange}
-                  placeholder="Enter fingerprint code"
-                  style={{
-                    width: "100%",
-                    background: "#3a3a3a",
-                    color: "#ffffff",
-                    border: "1px solid #4a4a4a",
-                    borderRadius: "0.5rem",
-                    padding: "0.75rem 1rem",
-                    fontSize: "0.875rem",
-                    outline: "none",
-                  }}
-                />
-              </div>
+                {/* Phone Number */}
+                <div style={{ marginBottom: "1.25rem" }}>
+                  <label
+                    htmlFor="phoneNumber"
+                    style={{
+                      display: "block",
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "0.8125rem",
+                      fontWeight: "500",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    placeholder="Enter phone number"
+                    style={{
+                      width: "100%",
+                      background: "rgba(255, 255, 255, 0.04)",
+                      color: "#FFFFFF",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "10px",
+                      padding: "0.75rem 1rem",
+                      fontSize: "0.875rem",
+                      outline: "none",
+                      transition: "all 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#EA8303";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
 
-              {/* Branch */}
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label
-                  htmlFor="branch"
-                  style={{
-                    display: "block",
-                    color: "#ffffff",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Branch *
-                </label>
-                <select
-                  id="branch"
-                  name="branch"
-                  value={formData.branch}
-                  onChange={handleChange}
-                  style={{
-                    width: "100%",
-                    background: "#3a3a3a",
-                    color: "#ffffff",
-                    border: "1px solid #4a4a4a",
-                    borderRadius: "0.5rem",
-                    padding: "0.75rem 1rem",
-                    fontSize: "0.875rem",
-                    outline: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  {branches.map((branch) => (
-                    <option key={branch} value={branch}>
-                      {branch}
+                {/* Employee Code */}
+                <div style={{ marginBottom: "1.25rem" }}>
+                  <label
+                    htmlFor="employeeCode"
+                    style={{
+                      display: "block",
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "0.8125rem",
+                      fontWeight: "500",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Employee Code *
+                  </label>
+                  <input
+                    type="text"
+                    id="employeeCode"
+                    name="employeeCode"
+                    value={formData.employeeCode}
+                    onChange={handleChange}
+                    placeholder="Enter employee code"
+                    style={{
+                      width: "100%",
+                      background: "rgba(255, 255, 255, 0.04)",
+                      color: "#FFFFFF",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "10px",
+                      padding: "0.75rem 1rem",
+                      fontSize: "0.875rem",
+                      outline: "none",
+                      transition: "all 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#EA8303";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
+
+                {/* Fingerprint */}
+                <div style={{ marginBottom: "1.25rem" }}>
+                  <label
+                    htmlFor="fingerprint"
+                    style={{
+                      display: "block",
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "0.8125rem",
+                      fontWeight: "500",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Fingerprint *
+                  </label>
+                  <input
+                    type="text"
+                    id="fingerprint"
+                    name="fingerprint"
+                    value={formData.fingerprint}
+                    onChange={handleChange}
+                    placeholder="Enter fingerprint code"
+                    style={{
+                      width: "100%",
+                      background: "rgba(255, 255, 255, 0.04)",
+                      color: "#FFFFFF",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "10px",
+                      padding: "0.75rem 1rem",
+                      fontSize: "0.875rem",
+                      outline: "none",
+                      transition: "all 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#EA8303";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
+
+                {/* Branch */}
+                <div style={{ marginBottom: "1.25rem" }}>
+                  <label
+                    htmlFor="branch"
+                    style={{
+                      display: "block",
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "0.8125rem",
+                      fontWeight: "500",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Branch *
+                  </label>
+                  <select
+                    id="branch"
+                    name="branch"
+                    value={formData.branch}
+                    onChange={handleChange}
+                    style={{
+                      width: "100%",
+                      background: "rgba(255, 255, 255, 0.04)",
+                      color: "#FFFFFF",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "10px",
+                      padding: "0.75rem 1rem",
+                      fontSize: "0.875rem",
+                      outline: "none",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#EA8303";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  >
+                    {branches.map((branch) => (
+                      <option
+                        key={branch}
+                        value={branch}
+                        style={{ background: "#1E1E1E" }}
+                      >
+                        {branch}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Title */}
+                <div style={{ marginBottom: "2rem" }}>
+                  <label
+                    htmlFor="title"
+                    style={{
+                      display: "block",
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "0.8125rem",
+                      fontWeight: "500",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Title *
+                  </label>
+                  <select
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    style={{
+                      width: "100%",
+                      background: "rgba(255, 255, 255, 0.04)",
+                      color: formData.title
+                        ? "#FFFFFF"
+                        : "rgba(255, 255, 255, 0.5)",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "10px",
+                      padding: "0.75rem 1rem",
+                      fontSize: "0.875rem",
+                      outline: "none",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#EA8303";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  >
+                    <option value="" disabled style={{ background: "#1E1E1E" }}>
+                      Select title
                     </option>
-                  ))}
-                </select>
-              </div>
+                    <option
+                      value="Frontend Lead"
+                      style={{ background: "#1E1E1E" }}
+                    >
+                      Frontend Lead
+                    </option>
+                    <option
+                      value="Backend Lead"
+                      style={{ background: "#1E1E1E" }}
+                    >
+                      Backend Lead
+                    </option>
+                    <option
+                      value="Frontend Developer"
+                      style={{ background: "#1E1E1E" }}
+                    >
+                      Frontend Developer
+                    </option>
+                    <option
+                      value="Backend Developer"
+                      style={{ background: "#1E1E1E" }}
+                    >
+                      Backend Developer
+                    </option>
+                    <option value="UI/UX" style={{ background: "#1E1E1E" }}>
+                      UI/UX
+                    </option>
+                    <option value="RA" style={{ background: "#1E1E1E" }}>
+                      RA
+                    </option>
+                  </select>
+                </div>
 
-              {/* Title */}
-              <div style={{ marginBottom: "2rem" }}>
-                <label
-                  htmlFor="title"
+                {/* Buttons */}
+                <div
                   style={{
-                    display: "block",
-                    color: "#ffffff",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    marginBottom: "0.5rem",
+                    display: "flex",
+                    gap: "1rem",
+                    justifyContent: "flex-end",
                   }}
                 >
-                  Title *
-                </label>
-                <select
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  style={{
-                    width: "100%",
-                    background: "#3a3a3a",
-                    color: formData.title ? "#ffffff" : "#6b7280",
-                    border: "1px solid #4a4a4a",
-                    borderRadius: "0.5rem",
-                    padding: "0.75rem 1rem",
-                    fontSize: "0.875rem",
-                    outline: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select title
-                  </option>
-                  <option value="Frontend Lead">Frontend Lead</option>
-                  <option value="Backend Lead">Backend Lead</option>
-                  <option value="Frontend Developer">Frontend Developer</option>
-                  <option value="Backend Developer">Backend Developer</option>
-                  <option value="UI/UX">UI/UX</option>
-                  <option value="RA">RA</option>
-                </select>
-              </div>
-
-              {/* Buttons */}
-              <div
-                style={{
-                  display: "flex",
-                  gap: "1rem",
-                  justifyContent: "flex-end",
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  disabled={loading}
-                  style={{
-                    background: "#3a3a3a",
-                    color: "#ffffff",
-                    padding: "0.75rem 1.5rem",
-                    borderRadius: "0.5rem",
-                    border: "1px solid #4a4a4a",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    cursor: loading ? "not-allowed" : "pointer",
-                    opacity: loading ? 0.5 : 1,
-                    transition: "background 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!loading) e.target.style.background = "#4a4a4a";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!loading) e.target.style.background = "#3a3a3a";
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  style={{
-                    background: loading ? "#9ca3af" : "#f97316",
-                    color: "#ffffff",
-                    padding: "0.75rem 1.5rem",
-                    borderRadius: "0.5rem",
-                    border: "none",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    cursor: loading ? "not-allowed" : "pointer",
-                    transition: "background 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!loading) e.target.style.background = "#ea580c";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!loading) e.target.style.background = "#f97316";
-                  }}
-                >
-                  {loading
-                    ? editingEmployeeId
-                      ? "Updating..."
-                      : "Adding..."
-                    : editingEmployeeId
-                    ? "Update Employee"
-                    : "Add Employee"}
-                </button>
-              </div>
-            </form>
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    disabled={loading}
+                    style={{
+                      background: "rgba(255, 255, 255, 0.06)",
+                      backdropFilter: "blur(10px)",
+                      WebkitBackdropFilter: "blur(10px)",
+                      color: "#FFFFFF",
+                      padding: "0.75rem 1.5rem",
+                      borderRadius: "12px",
+                      border: "1px solid rgba(255, 255, 255, 0.15)",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      cursor: loading ? "not-allowed" : "pointer",
+                      opacity: loading ? 0.5 : 1,
+                      transition: "all 0.3s ease",
+                      boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!loading) {
+                        e.currentTarget.style.background =
+                          "rgba(255, 255, 255, 0.12)";
+                        e.currentTarget.style.borderColor =
+                          "rgba(255, 255, 255, 0.25)";
+                        e.currentTarget.style.transform = "translateY(-2px)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!loading) {
+                        e.currentTarget.style.background =
+                          "rgba(255, 255, 255, 0.06)";
+                        e.currentTarget.style.borderColor =
+                          "rgba(255, 255, 255, 0.15)";
+                        e.currentTarget.style.transform = "translateY(0)";
+                      }
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    style={{
+                      background: loading
+                        ? "rgba(255, 255, 255, 0.1)"
+                        : "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)",
+                      backdropFilter: "blur(10px)",
+                      WebkitBackdropFilter: "blur(10px)",
+                      color: "#FFFFFF",
+                      padding: "0.75rem 1.5rem",
+                      borderRadius: "12px",
+                      border: loading
+                        ? "none"
+                        : "1px solid rgba(255, 255, 255, 0.2)",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      cursor: loading ? "not-allowed" : "pointer",
+                      transition: "all 0.3s ease",
+                      boxShadow: loading
+                        ? "none"
+                        : "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!loading) {
+                        e.currentTarget.style.background =
+                          "linear-gradient(135deg, rgba(234, 131, 3, 1) 0%, rgba(234, 131, 3, 0.85) 100%)";
+                        e.currentTarget.style.boxShadow =
+                          "0 6px 20px rgba(234, 131, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+                        e.currentTarget.style.transform = "translateY(-2px)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!loading) {
+                        e.currentTarget.style.background =
+                          "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)";
+                        e.currentTarget.style.boxShadow =
+                          "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+                        e.currentTarget.style.transform = "translateY(0)";
+                      }
+                    }}
+                  >
+                    {loading
+                      ? editingEmployeeId
+                        ? "Updating..."
+                        : "Adding..."
+                      : editingEmployeeId
+                      ? "Update Employee"
+                      : "Add Employee"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}

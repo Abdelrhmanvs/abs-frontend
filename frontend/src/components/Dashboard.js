@@ -191,6 +191,8 @@ const Dashboard = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+      // Auto-set end date when start date is selected
+      ...(name === "startDate" && { endDate: value }),
     }));
   };
 
@@ -199,6 +201,8 @@ const Dashboard = () => {
     setCustomFormData((prev) => ({
       ...prev,
       [name]: value,
+      // Auto-set end date when start date is selected
+      ...(name === "startDate" && { endDate: value }),
     }));
   };
 
@@ -291,60 +295,72 @@ const Dashboard = () => {
   };
 
   return (
-    <div
-      style={{
-        marginLeft: "235px",
-        marginTop: "65px",
-        minHeight: "calc(100vh - 65px)",
-        background: "#1a1a1a",
-        padding: "2rem",
-      }}
-    >
-      {/* Quick Actions Section */}
+    <div style={{ background: "#2D2D31", minHeight: "100vh", padding: "2rem" }}>
+      {/* Quick Actions Bar */}
       <div
+        className="animate-fadeInDown"
         style={{
-          background: "#2d2d2d",
-          borderRadius: "0.75rem",
-          padding: "1.5rem",
-          marginBottom: "2rem",
+          background: "#1E1E1E",
+          borderRadius: "12px",
+          padding: "1rem 1.5rem",
+          marginBottom: "2.5rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
         }}
       >
         <h2
           style={{
-            fontSize: "1.25rem",
-            fontWeight: "600",
-            color: "#ffffff",
-            marginBottom: "1rem",
+            fontSize: "0.875rem",
+            fontWeight: "500",
+            color: "#FFFFFF",
+            margin: 0,
+            opacity: 0.7,
+            letterSpacing: "0.5px",
           }}
         >
           Quick Actions
         </h2>
-        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+        <div>
           {!auth?.roles?.includes("admin") && (
             <button
               onClick={handleNewRequest}
               style={{
-                background: "#f97316",
-                color: "#ffffff",
-                padding: "0.75rem 1.5rem",
-                borderRadius: "0.5rem",
-                border: "none",
+                background:
+                  "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+                color: "#FFFFFF",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: "12px",
+                padding: "0.625rem 1.25rem",
                 fontSize: "0.875rem",
-                fontWeight: "600",
+                fontWeight: "500",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 gap: "0.5rem",
-                transition: "background 0.2s",
+                transition: "all 0.3s ease",
+                boxShadow:
+                  "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
               }}
               onMouseEnter={(e) => {
-                e.target.style.background = "#ea580c";
+                e.currentTarget.style.background =
+                  "linear-gradient(135deg, rgba(234, 131, 3, 1) 0%, rgba(234, 131, 3, 0.85) 100%)";
+                e.currentTarget.style.boxShadow =
+                  "0 6px 20px rgba(234, 131, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+                e.currentTarget.style.transform = "translateY(-2px)";
               }}
               onMouseLeave={(e) => {
-                e.target.style.background = "#f97316";
+                e.currentTarget.style.background =
+                  "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
-              <span style={{ fontSize: "1rem" }}>+</span>
+              <span style={{ fontSize: "1.125rem", lineHeight: "1" }}>+</span>
               New Request
             </button>
           )}
@@ -352,27 +368,40 @@ const Dashboard = () => {
             <button
               onClick={handleCustomRequest}
               style={{
-                background: "#f97316",
-                color: "#ffffff",
-                padding: "0.75rem 1.5rem",
-                borderRadius: "0.5rem",
-                border: "none",
+                background:
+                  "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+                color: "#FFFFFF",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: "12px",
+                padding: "0.625rem 1.25rem",
                 fontSize: "0.875rem",
-                fontWeight: "600",
+                fontWeight: "500",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 gap: "0.5rem",
-                transition: "background 0.2s",
+                transition: "all 0.3s ease",
+                boxShadow:
+                  "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
               }}
               onMouseEnter={(e) => {
-                e.target.style.background = "#ea580c";
+                e.currentTarget.style.background =
+                  "linear-gradient(135deg, rgba(234, 131, 3, 1) 0%, rgba(234, 131, 3, 0.85) 100%)";
+                e.currentTarget.style.boxShadow =
+                  "0 6px 20px rgba(234, 131, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+                e.currentTarget.style.transform = "translateY(-2px)";
               }}
               onMouseLeave={(e) => {
-                e.target.style.background = "#f97316";
+                e.currentTarget.style.background =
+                  "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
-              <span style={{ fontSize: "1rem" }}>+</span>
+              <span style={{ fontSize: "1.125rem", lineHeight: "1" }}>+</span>
               Custom Request
             </button>
           )}
@@ -381,79 +410,76 @@ const Dashboard = () => {
 
       {/* Current Week Schedule Section */}
       <div
+        className="animate-fadeInUp hover-lift"
         style={{
-          background: "#2d2d2d",
-          borderRadius: "0.75rem",
-          padding: "1.5rem",
-          marginBottom: "2rem",
+          background: "#1E1E1E",
+          borderRadius: "16px",
+          padding: "2rem",
+          marginBottom: "2.5rem",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+          animationDelay: "0.1s",
+          animationFillMode: "both",
         }}
       >
         <h2
           style={{
-            fontSize: "1.25rem",
+            fontSize: "1.125rem",
             fontWeight: "600",
-            color: "#ffffff",
-            marginBottom: "1.5rem",
+            color: "#FFFFFF",
+            marginBottom: "1.75rem",
+            letterSpacing: "-0.01em",
           }}
         >
-          My Schedule - Current Week
+          My Schedule — Current Week
         </h2>
 
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(7, 1fr)",
-            gap: "0.75rem",
+            gridTemplateColumns: "repeat(auto-fit, minmax(90px, 1fr))",
+            gap: "1rem",
           }}
         >
           {currentWeek.map((day, index) => {
             const daySchedule = isWFHDay(day.date);
             const isFriday = day.dayName === "Fri";
+            const isHighlighted = day.isToday || daySchedule.hasRequest;
+
             return (
               <div
                 key={index}
                 style={{
-                  background: isFriday
-                    ? "rgba(239, 68, 68, 0.1)"
-                    : day.isToday
-                    ? "#3a3a3a"
-                    : daySchedule.hasRequest
-                    ? "rgba(249, 115, 22, 0.1)"
-                    : "#2d2d2d",
-                  border: isFriday
-                    ? "1px solid #ef4444"
-                    : day.isToday
-                    ? "2px solid #f97316"
-                    : daySchedule.hasRequest
-                    ? "1px solid #f97316"
-                    : "1px solid #404040",
-                  borderRadius: "0.5rem",
-                  padding: "1rem",
+                  background: day.isToday ? "#2A2A2E" : "#1E1E1E",
+                  border: day.isToday
+                    ? "2px solid #EA8303"
+                    : "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "12px",
+                  padding: "1.25rem 0.75rem",
                   textAlign: "center",
-                  transition: "all 0.2s",
+                  transition: "all 0.2s ease",
+                  position: "relative",
+                  overflow: "hidden",
                 }}
               >
                 <div
                   style={{
-                    fontSize: "0.75rem",
+                    fontSize: "0.6875rem",
                     fontWeight: "600",
-                    color: isFriday ? "#ef4444" : "#9ca3af",
-                    marginBottom: "0.5rem",
+                    color: day.isToday ? "#EA8303" : "rgba(255, 255, 255, 0.5)",
+                    marginBottom: "0.625rem",
                     textTransform: "uppercase",
+                    letterSpacing: "0.5px",
                   }}
                 >
                   {day.dayName}
                 </div>
                 <div
                   style={{
-                    fontSize: "1.5rem",
-                    fontWeight: "700",
-                    color: isFriday
-                      ? "#ef4444"
-                      : day.isToday
-                      ? "#f97316"
-                      : "#ffffff",
-                    marginBottom: "0.5rem",
+                    fontSize: "1.75rem",
+                    fontWeight: "600",
+                    color: day.isToday ? "#EA8303" : "#FFFFFF",
+                    marginBottom: "0.75rem",
+                    lineHeight: "1",
                   }}
                 >
                   {day.dayNumber}
@@ -462,17 +488,19 @@ const Dashboard = () => {
                   <div
                     style={{
                       fontSize: "0.625rem",
-                      fontWeight: "600",
-                      color: "#ef4444",
-                      background: "rgba(239, 68, 68, 0.2)",
-                      padding: "0.25rem 0.5rem",
-                      borderRadius: "0.25rem",
-                      marginTop: "0.5rem",
+                      fontWeight: "500",
+                      color: "rgba(255, 255, 255, 0.4)",
+                      background: "rgba(255, 255, 255, 0.05)",
+                      padding: "0.375rem 0.5rem",
+                      borderRadius: "6px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.25rem",
                     }}
                   >
                     <i
                       className="fas fa-calendar-times"
-                      style={{ marginRight: "0.25rem" }}
+                      style={{ fontSize: "0.625rem" }}
                     ></i>
                     Holiday
                   </div>
@@ -480,27 +508,28 @@ const Dashboard = () => {
                   <div
                     style={{
                       fontSize: "0.625rem",
-                      fontWeight: "600",
-                      color: "#f97316",
-                      background: "rgba(249, 115, 22, 0.2)",
-                      padding: "0.25rem 0.5rem",
-                      borderRadius: "0.25rem",
-                      marginTop: "0.5rem",
+                      fontWeight: "500",
+                      color: "#EA8303",
+                      background: "rgba(234, 131, 3, 0.12)",
+                      padding: "0.375rem 0.5rem",
+                      borderRadius: "6px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.25rem",
                     }}
                   >
                     <i
                       className="fas fa-home"
-                      style={{ marginRight: "0.25rem" }}
+                      style={{ fontSize: "0.625rem" }}
                     ></i>
-                    {daySchedule.type === "WFH" ? "Work From Home" : "Leave"}
+                    {daySchedule.type === "WFH" ? "WFH" : "Leave"}
                   </div>
                 ) : (
                   <div
                     style={{
-                      fontSize: "0.625rem",
-                      fontWeight: "600",
-                      color: "#6b7280",
-                      marginTop: "0.5rem",
+                      fontSize: "0.6875rem",
+                      fontWeight: "500",
+                      color: "rgba(255, 255, 255, 0.3)",
                     }}
                   >
                     Office
@@ -515,19 +544,24 @@ const Dashboard = () => {
       {/* Team WFH Today Section - Only for Team Leads and Admins */}
       {teamWFH.length > 0 && (
         <div
+          className="animate-fadeInUp hover-lift"
           style={{
-            background: "#2d2d2d",
-            borderRadius: "0.75rem",
-            padding: "1.5rem",
-            marginBottom: "2rem",
+            background: "#1E1E1E",
+            borderRadius: "16px",
+            padding: "2rem",
+            marginBottom: "2.5rem",
+            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+            animationDelay: "0.2s",
+            animationFillMode: "both",
           }}
         >
           <h2
             style={{
-              fontSize: "1.25rem",
+              fontSize: "1.125rem",
               fontWeight: "600",
-              color: "#ffffff",
-              marginBottom: "1.5rem",
+              color: "#FFFFFF",
+              marginBottom: "1.75rem",
+              letterSpacing: "-0.01em",
             }}
           >
             Team Working From Home Today
@@ -536,7 +570,7 @@ const Dashboard = () => {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
               gap: "1rem",
             }}
           >
@@ -544,59 +578,66 @@ const Dashboard = () => {
               <div
                 key={index}
                 style={{
-                  background: "#3a3a3a",
-                  border: "1px solid #4a4a4a",
-                  borderRadius: "0.5rem",
-                  padding: "1rem",
-                  transition: "all 0.2s",
+                  background: "#1E1E1E",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "12px",
+                  padding: "1.25rem",
+                  transition: "all 0.2s ease",
+                  cursor: "pointer",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#404040";
-                  e.currentTarget.style.borderColor = "#f97316";
+                  e.currentTarget.style.background = "#2A2A2E";
+                  e.currentTarget.style.borderColor = "rgba(234, 131, 3, 0.3)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#3a3a3a";
-                  e.currentTarget.style.borderColor = "#4a4a4a";
+                  e.currentTarget.style.background = "#1E1E1E";
+                  e.currentTarget.style.borderColor =
+                    "rgba(255, 255, 255, 0.08)";
                 }}
               >
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "0.75rem",
+                    gap: "0.875rem",
                   }}
                 >
                   <div
                     style={{
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "50%",
-                      background: "#f97316",
+                      width: "44px",
+                      height: "44px",
+                      borderRadius: "10px",
+                      background: "rgba(234, 131, 3, 0.12)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#ffffff",
-                      fontWeight: "bold",
-                      fontSize: "0.875rem",
+                      color: "#EA8303",
+                      fontWeight: "600",
+                      fontSize: "0.9375rem",
+                      flexShrink: 0,
                     }}
                   >
                     {employee.name.substring(0, 2).toUpperCase()}
                   </div>
-                  <div style={{ flex: 1 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <div
                       style={{
-                        color: "#ffffff",
+                        color: "#FFFFFF",
                         fontSize: "0.875rem",
-                        fontWeight: "600",
+                        fontWeight: "500",
                         marginBottom: "0.25rem",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                       }}
                     >
                       {employee.name}
                     </div>
                     <div
                       style={{
-                        color: "#9ca3af",
+                        color: "rgba(255, 255, 255, 0.4)",
                         fontSize: "0.75rem",
+                        fontWeight: "400",
                       }}
                     >
                       {employee.code}
@@ -606,13 +647,18 @@ const Dashboard = () => {
                     style={{
                       background:
                         employee.type === "WFH"
-                          ? "rgba(16, 185, 129, 0.2)"
-                          : "rgba(59, 130, 246, 0.2)",
-                      color: employee.type === "WFH" ? "#10b981" : "#3b82f6",
-                      padding: "0.25rem 0.5rem",
-                      borderRadius: "0.25rem",
-                      fontSize: "0.75rem",
+                          ? "rgba(234, 131, 3, 0.12)"
+                          : "rgba(255, 255, 255, 0.08)",
+                      color:
+                        employee.type === "WFH"
+                          ? "#EA8303"
+                          : "rgba(255, 255, 255, 0.6)",
+                      padding: "0.375rem 0.625rem",
+                      borderRadius: "6px",
+                      fontSize: "0.6875rem",
                       fontWeight: "600",
+                      letterSpacing: "0.3px",
+                      flexShrink: 0,
                     }}
                   >
                     {employee.type === "WFH" ? "WFH" : "Vacation"}
@@ -626,145 +672,245 @@ const Dashboard = () => {
 
       {/* Recent Requests Section */}
       <div
+        className="animate-fadeInUp hover-lift"
         style={{
-          background: "#2d2d2d",
-          borderRadius: "0.75rem",
-          padding: "1.5rem",
+          background: "#1E1E1E",
+          borderRadius: "16px",
+          padding: "2rem",
+          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
+          animationDelay: "0.3s",
+          animationFillMode: "both",
         }}
       >
         <h2
           style={{
-            fontSize: "1.25rem",
+            fontSize: "1.125rem",
             fontWeight: "600",
-            color: "#ffffff",
-            marginBottom: "1.5rem",
+            color: "#FFFFFF",
+            marginBottom: "1.75rem",
+            letterSpacing: "-0.01em",
           }}
         >
           Recent Requests
         </h2>
 
         {/* Table */}
-        <div style={{ overflowX: "auto" }}>
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-            }}
+        {recentRequests.length > 0 ? (
+          <div
+            style={{ overflowX: "auto", margin: "0 -2rem", padding: "0 2rem" }}
           >
-            <thead>
-              <tr
-                style={{
-                  borderBottom: "1px solid #404040",
-                }}
-              >
-                <th
-                  style={{
-                    textAlign: "left",
-                    padding: "1rem",
-                    color: "#9ca3af",
-                    fontWeight: "500",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  Request Type
-                </th>
-                <th
-                  style={{
-                    textAlign: "left",
-                    padding: "1rem",
-                    color: "#9ca3af",
-                    fontWeight: "500",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  Date
-                </th>
-                <th
-                  style={{
-                    textAlign: "left",
-                    padding: "1rem",
-                    color: "#9ca3af",
-                    fontWeight: "500",
-                    fontSize: "0.875rem",
-                  }}
-                >
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentRequests.map((request) => (
-                <tr
-                  key={request.id}
-                  style={{
-                    borderBottom: "1px solid #404040",
-                  }}
-                >
-                  <td
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "separate",
+                borderSpacing: 0,
+              }}
+            >
+              <thead>
+                <tr>
+                  <th
                     style={{
-                      padding: "1rem",
-                      color: "#ffffff",
-                      fontSize: "0.875rem",
+                      textAlign: "left",
+                      padding: "0.875rem 1rem",
+                      fontSize: "0.75rem",
+                      fontWeight: "600",
+                      color: "rgba(255, 255, 255, 0.5)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                      background: "rgba(255, 255, 255, 0.02)",
                     }}
                   >
-                    {request.type}
-                  </td>
-                  <td
+                    Request Type
+                  </th>
+                  <th
                     style={{
-                      padding: "1rem",
-                      color: "#ffffff",
-                      fontSize: "0.875rem",
+                      textAlign: "left",
+                      padding: "0.875rem 1rem",
+                      fontSize: "0.75rem",
+                      fontWeight: "600",
+                      color: "rgba(255, 255, 255, 0.5)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                      background: "rgba(255, 255, 255, 0.02)",
                     }}
                   >
-                    {request.date}
-                  </td>
-                  <td style={{ padding: "1rem" }}>
-                    <span
+                    Date
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      padding: "0.875rem 1rem",
+                      fontSize: "0.75rem",
+                      fontWeight: "600",
+                      color: "rgba(255, 255, 255, 0.5)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                      background: "rgba(255, 255, 255, 0.02)",
+                    }}
+                  >
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentRequests.map((request, index) => (
+                  <tr
+                    key={request.id}
+                    style={{
+                      transition: "background 0.15s ease",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background =
+                        "rgba(255, 255, 255, 0.03)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "transparent";
+                    }}
+                  >
+                    <td
                       style={{
-                        display: "inline-block",
-                        padding: "0.375rem 0.75rem",
-                        borderRadius: "0.375rem",
-                        fontSize: "0.75rem",
-                        fontWeight: "600",
-                        background: `${getStatusColor(request.status)}20`,
-                        color: getStatusColor(request.status),
+                        padding: "1rem",
+                        color: "#FFFFFF",
+                        fontSize: "0.875rem",
+                        fontWeight: "500",
+                        borderBottom:
+                          index === recentRequests.length - 1
+                            ? "none"
+                            : "1px solid rgba(255, 255, 255, 0.05)",
                       }}
                     >
-                      {request.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                      {request.type}
+                    </td>
+                    <td
+                      style={{
+                        padding: "1rem",
+                        color: "rgba(255, 255, 255, 0.6)",
+                        fontSize: "0.875rem",
+                        fontWeight: "400",
+                        borderBottom:
+                          index === recentRequests.length - 1
+                            ? "none"
+                            : "1px solid rgba(255, 255, 255, 0.05)",
+                      }}
+                    >
+                      {request.date}
+                    </td>
+                    <td
+                      style={{
+                        padding: "1rem",
+                        borderBottom:
+                          index === recentRequests.length - 1
+                            ? "none"
+                            : "1px solid rgba(255, 255, 255, 0.05)",
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          padding: "0.375rem 0.75rem",
+                          borderRadius: "6px",
+                          fontSize: "0.75rem",
+                          fontWeight: "600",
+                          letterSpacing: "0.3px",
+                          background:
+                            request.status.toLowerCase() === "approved"
+                              ? "rgba(16, 185, 129, 0.12)"
+                              : request.status.toLowerCase() === "pending"
+                              ? "rgba(234, 131, 3, 0.12)"
+                              : "rgba(239, 68, 68, 0.12)",
+                          color:
+                            request.status.toLowerCase() === "approved"
+                              ? "#10b981"
+                              : request.status.toLowerCase() === "pending"
+                              ? "#EA8303"
+                              : "#ef4444",
+                        }}
+                      >
+                        {request.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div
+            style={{
+              textAlign: "center",
+              padding: "3rem 1rem",
+            }}
+          >
+            <div
+              style={{
+                width: "64px",
+                height: "64px",
+                borderRadius: "50%",
+                background: "rgba(255, 255, 255, 0.05)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 1.25rem",
+              }}
+            >
+              <i
+                className="fas fa-inbox"
+                style={{
+                  fontSize: "1.75rem",
+                  color: "rgba(255, 255, 255, 0.2)",
+                }}
+              ></i>
+            </div>
+            <p
+              style={{
+                color: "rgba(255, 255, 255, 0.4)",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                margin: 0,
+              }}
+            >
+              No recent requests
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Modal */}
       {showModal && (
         <div
+          className="modal-animate-overlay"
           style={{
             position: "fixed",
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            background: "rgba(0, 0, 0, 0.7)",
+            background: "rgba(0, 0, 0, 0.8)",
+            backdropFilter: "blur(4px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             zIndex: 1000,
+            padding: "1rem",
           }}
           onClick={handleCloseModal}
         >
           <div
+            className="modal-animate-content"
             style={{
-              background: "#2d2d2d",
-              borderRadius: "0.75rem",
-              width: "90%",
-              maxWidth: "600px",
-              padding: "2rem",
-              position: "relative",
+              background: "#1E1E1E",
+              borderRadius: "16px",
+              maxWidth: "500px",
+              width: "100%",
+              maxHeight: "90vh",
+              overflow: "hidden",
+              border: "1px solid rgba(255, 255, 255, 0.06)",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -774,112 +920,139 @@ const Dashboard = () => {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                marginBottom: "2rem",
-                paddingBottom: "1rem",
-                borderBottom: "1px solid #404040",
+                padding: "1.5rem 2rem",
+                borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+                background:
+                  "linear-gradient(to right, rgba(234, 131, 3, 0.1), transparent)",
               }}
             >
-              <h2
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "600",
-                  color: "#ffffff",
-                  margin: 0,
-                }}
-              >
-                Create New Request
-              </h2>
+              <div>
+                <h2
+                  style={{
+                    fontSize: "1.25rem",
+                    fontWeight: "600",
+                    color: "#FFFFFF",
+                    margin: 0,
+                    marginBottom: "0.25rem",
+                  }}
+                >
+                  Create New Request
+                </h2>
+                <p
+                  style={{
+                    color: "rgba(255, 255, 255, 0.5)",
+                    fontSize: "0.875rem",
+                    margin: 0,
+                  }}
+                >
+                  Submit a new request for approval
+                </p>
+              </div>
               <button
                 onClick={handleCloseModal}
                 style={{
-                  background: "#3a3a3a",
-                  color: "#ffffff",
+                  background: "rgba(255, 255, 255, 0.06)",
+                  color: "rgba(255, 255, 255, 0.5)",
                   border: "none",
-                  borderRadius: "0.5rem",
-                  width: "2.5rem",
-                  height: "2.5rem",
-                  fontSize: "1.25rem",
+                  width: "2rem",
+                  height: "2rem",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  transition: "background 0.2s",
+                  borderRadius: "8px",
+                  transition: "all 0.2s",
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.background = "#4a4a4a";
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
+                  e.currentTarget.style.color = "#FFFFFF";
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.background = "#3a3a3a";
+                  e.currentTarget.style.background =
+                    "rgba(255, 255, 255, 0.06)";
+                  e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)";
                 }}
               >
-                ✕
+                <i className="fas fa-times"></i>
               </button>
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleSubmitRequest}>
-              {/* Request Type */}
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label
-                  style={{
-                    display: "block",
-                    color: "#ffffff",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Request Type
-                </label>
-                <select
-                  name="requestType"
-                  value={formData.requestType}
-                  onChange={handleFormChange}
-                  required
-                  style={{
-                    width: "100%",
-                    background: "#3a3a3a",
-                    color: formData.requestType ? "#ffffff" : "#6b7280",
-                    border: "1px solid #4a4a4a",
-                    borderRadius: "0.5rem",
-                    padding: "0.875rem 1rem",
-                    fontSize: "0.875rem",
-                    outline: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select type
-                  </option>
-                  <option value="WFH">العمل من المنزل</option>
-                  <option value="VACATION">إجازة</option>
-                  <option value="LATE_PERMISSION">اذن تاخير</option>
-                  <option value="EARLY_LEAVE">انصراف مبكر</option>
-                </select>
-              </div>
-
-              {/* Date Fields */}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "1rem",
-                  marginBottom: "1.5rem",
-                }}
-              >
-                <div>
+            <div style={{ maxHeight: "calc(90vh - 100px)", overflowY: "auto" }}>
+              <form onSubmit={handleSubmitRequest} style={{ padding: "2rem" }}>
+                {/* Request Type */}
+                <div style={{ marginBottom: "1.25rem" }}>
                   <label
                     style={{
                       display: "block",
-                      color: "#ffffff",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "0.8125rem",
+                      fontWeight: "500",
                       marginBottom: "0.5rem",
                     }}
                   >
-                    Start Date
+                    Request Type
                   </label>
-                  <div style={{ position: "relative" }}>
+                  <select
+                    name="requestType"
+                    value={formData.requestType}
+                    onChange={handleFormChange}
+                    required
+                    style={{
+                      width: "100%",
+                      background: "rgba(255, 255, 255, 0.04)",
+                      color: formData.requestType
+                        ? "#FFFFFF"
+                        : "rgba(255, 255, 255, 0.4)",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "10px",
+                      padding: "0.75rem 1rem",
+                      fontSize: "0.875rem",
+                      outline: "none",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#EA8303";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  >
+                    <option value="" disabled>
+                      Select type
+                    </option>
+                    <option value="WFH">العمل من المنزل</option>
+                    <option value="VACATION">إجازة</option>
+                    <option value="LATE_PERMISSION">اذن تاخير</option>
+                    <option value="EARLY_LEAVE">انصراف مبكر</option>
+                  </select>
+                </div>
+
+                {/* Date Fields */}
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "1rem",
+                    marginBottom: "1.5rem",
+                  }}
+                >
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        color: "rgba(255, 255, 255, 0.7)",
+                        fontSize: "0.8125rem",
+                        fontWeight: "500",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      Start Date
+                    </label>
                     <input
                       type="date"
                       name="startDate"
@@ -888,11 +1061,11 @@ const Dashboard = () => {
                       required
                       style={{
                         width: "100%",
-                        background: "#3a3a3a",
-                        color: "#ffffff",
-                        border: "1px solid #4a4a4a",
-                        borderRadius: "0.5rem",
-                        padding: "0.875rem 2.5rem 0.875rem 1rem",
+                        background: "rgba(255, 255, 255, 0.04)",
+                        color: "#FFFFFF",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                        borderRadius: "10px",
+                        padding: "0.75rem 1rem",
                         fontSize: "0.875rem",
                         outline: "none",
                         cursor: "pointer",
@@ -900,42 +1073,29 @@ const Dashboard = () => {
                         colorScheme: "dark",
                       }}
                       onFocus={(e) => {
-                        e.target.style.borderColor = "#f97316";
+                        e.target.style.borderColor = "#EA8303";
                         e.target.style.boxShadow =
-                          "0 0 0 3px rgba(249, 115, 22, 0.1)";
+                          "0 0 0 3px rgba(234, 131, 3, 0.1)";
                       }}
                       onBlur={(e) => {
-                        e.target.style.borderColor = "#4a4a4a";
+                        e.target.style.borderColor =
+                          "rgba(255, 255, 255, 0.08)";
                         e.target.style.boxShadow = "none";
                       }}
                     />
-                    <i
-                      className="fas fa-calendar-alt"
-                      style={{
-                        position: "absolute",
-                        right: "1rem",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        color: "#9ca3af",
-                        pointerEvents: "none",
-                        fontSize: "0.875rem",
-                      }}
-                    ></i>
                   </div>
-                </div>
-                <div>
-                  <label
-                    style={{
-                      display: "block",
-                      color: "#ffffff",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    End Date
-                  </label>
-                  <div style={{ position: "relative" }}>
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        color: "rgba(255, 255, 255, 0.7)",
+                        fontSize: "0.8125rem",
+                        fontWeight: "500",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      End Date
+                    </label>
                     <input
                       type="date"
                       name="endDate"
@@ -944,11 +1104,11 @@ const Dashboard = () => {
                       required
                       style={{
                         width: "100%",
-                        background: "#3a3a3a",
-                        color: "#ffffff",
-                        border: "1px solid #4a4a4a",
-                        borderRadius: "0.5rem",
-                        padding: "0.875rem 2.5rem 0.875rem 1rem",
+                        background: "rgba(255, 255, 255, 0.04)",
+                        color: "#FFFFFF",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                        borderRadius: "10px",
+                        padding: "0.75rem 1rem",
                         fontSize: "0.875rem",
                         outline: "none",
                         cursor: "pointer",
@@ -956,87 +1116,108 @@ const Dashboard = () => {
                         colorScheme: "dark",
                       }}
                       onFocus={(e) => {
-                        e.target.style.borderColor = "#f97316";
+                        e.target.style.borderColor = "#EA8303";
                         e.target.style.boxShadow =
-                          "0 0 0 3px rgba(249, 115, 22, 0.1)";
+                          "0 0 0 3px rgba(234, 131, 3, 0.1)";
                       }}
                       onBlur={(e) => {
-                        e.target.style.borderColor = "#4a4a4a";
+                        e.target.style.borderColor =
+                          "rgba(255, 255, 255, 0.08)";
                         e.target.style.boxShadow = "none";
                       }}
                     />
-                    <i
-                      className="fas fa-calendar-alt"
-                      style={{
-                        position: "absolute",
-                        right: "1rem",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        color: "#9ca3af",
-                        pointerEvents: "none",
-                        fontSize: "0.875rem",
-                      }}
-                    ></i>
                   </div>
                 </div>
-              </div>
 
-              {/* Buttons */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  gap: "1rem",
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={handleCloseModal}
+                {/* Buttons */}
+                <div
                   style={{
-                    background: "#3a3a3a",
-                    color: "#ffffff",
-                    padding: "0.875rem 1.5rem",
-                    borderRadius: "0.5rem",
-                    border: "none",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    transition: "background 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.background = "#4a4a4a";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.background = "#3a3a3a";
+                    display: "flex",
+                    gap: "1rem",
+                    justifyContent: "flex-end",
                   }}
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  style={{
-                    background: loading ? "#9ca3af" : "#f97316",
-                    color: "#ffffff",
-                    padding: "0.875rem 1.5rem",
-                    borderRadius: "0.5rem",
-                    border: "none",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    cursor: loading ? "not-allowed" : "pointer",
-                    transition: "background 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!loading) e.target.style.background = "#ea580c";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!loading) e.target.style.background = "#f97316";
-                  }}
-                >
-                  {loading ? "Submitting..." : "Submit Request"}
-                </button>
-              </div>
-            </form>
+                  <button
+                    type="button"
+                    onClick={handleCloseModal}
+                    style={{
+                      background: "rgba(255, 255, 255, 0.06)",
+                      backdropFilter: "blur(10px)",
+                      WebkitBackdropFilter: "blur(10px)",
+                      color: "#FFFFFF",
+                      border: "1px solid rgba(255, 255, 255, 0.15)",
+                      borderRadius: "12px",
+                      padding: "0.75rem 1.5rem",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease",
+                      boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background =
+                        "rgba(255, 255, 255, 0.12)";
+                      e.currentTarget.style.borderColor =
+                        "rgba(255, 255, 255, 0.25)";
+                      e.currentTarget.style.transform = "translateY(-2px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background =
+                        "rgba(255, 255, 255, 0.06)";
+                      e.currentTarget.style.borderColor =
+                        "rgba(255, 255, 255, 0.15)";
+                      e.currentTarget.style.transform = "translateY(0)";
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    style={{
+                      background: loading
+                        ? "rgba(255, 255, 255, 0.1)"
+                        : "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)",
+                      backdropFilter: "blur(10px)",
+                      WebkitBackdropFilter: "blur(10px)",
+                      color: "#FFFFFF",
+                      border: loading
+                        ? "none"
+                        : "1px solid rgba(255, 255, 255, 0.2)",
+                      borderRadius: "12px",
+                      padding: "0.75rem 1.5rem",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      cursor: loading ? "not-allowed" : "pointer",
+                      transition: "all 0.3s ease",
+                      boxShadow: loading
+                        ? "none"
+                        : "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!loading) {
+                        e.currentTarget.style.background =
+                          "linear-gradient(135deg, rgba(234, 131, 3, 1) 0%, rgba(234, 131, 3, 0.85) 100%)";
+                        e.currentTarget.style.boxShadow =
+                          "0 6px 20px rgba(234, 131, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+                        e.currentTarget.style.transform = "translateY(-2px)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!loading) {
+                        e.currentTarget.style.background =
+                          "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)";
+                        e.currentTarget.style.boxShadow =
+                          "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+                        e.currentTarget.style.transform = "translateY(0)";
+                      }
+                    }}
+                  >
+                    {loading ? "Submitting..." : "Submit Request"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}
@@ -1044,187 +1225,228 @@ const Dashboard = () => {
       {/* Custom Request Modal for Admin */}
       {showCustomModal && (
         <div
+          className="modal-animate-overlay"
           style={{
             position: "fixed",
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            background: "rgba(0, 0, 0, 0.75)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
+            background: "rgba(0, 0, 0, 0.8)",
             backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: "1rem",
           }}
           onClick={handleCloseCustomModal}
         >
           <div
+            className="modal-animate-content"
             style={{
-              background: "#2d2d2d",
-              borderRadius: "0.75rem",
+              background: "#1E1E1E",
+              borderRadius: "16px",
               maxWidth: "500px",
-              width: "90%",
+              width: "100%",
               maxHeight: "90vh",
-              overflow: "auto",
+              overflow: "hidden",
+              border: "1px solid rgba(255, 255, 255, 0.06)",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
             }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div
               style={{
-                padding: "1.5rem",
-                borderBottom: "1px solid #404040",
+                padding: "1.5rem 2rem",
+                borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
+                background:
+                  "linear-gradient(to right, rgba(234, 131, 3, 0.1), transparent)",
               }}
             >
-              <h2
-                style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "600",
-                  color: "#ffffff",
-                  margin: 0,
-                }}
-              >
-                Create Custom Request
-              </h2>
+              <div>
+                <h2
+                  style={{
+                    fontSize: "1.25rem",
+                    fontWeight: "600",
+                    color: "#FFFFFF",
+                    margin: 0,
+                    marginBottom: "0.25rem",
+                  }}
+                >
+                  Create Custom Request
+                </h2>
+                <p
+                  style={{
+                    color: "rgba(255, 255, 255, 0.5)",
+                    fontSize: "0.875rem",
+                    margin: 0,
+                  }}
+                >
+                  Create a request for an employee
+                </p>
+              </div>
               <button
                 onClick={handleCloseCustomModal}
                 style={{
-                  background: "#3a3a3a",
-                  color: "#ffffff",
+                  background: "rgba(255, 255, 255, 0.06)",
+                  color: "rgba(255, 255, 255, 0.5)",
                   border: "none",
-                  borderRadius: "0.5rem",
-                  width: "2.5rem",
-                  height: "2.5rem",
-                  fontSize: "1.25rem",
+                  width: "2rem",
+                  height: "2rem",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  transition: "background 0.2s",
+                  borderRadius: "8px",
+                  transition: "all 0.2s",
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.background = "#4a4a4a";
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
+                  e.currentTarget.style.color = "#FFFFFF";
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.background = "#3a3a3a";
+                  e.currentTarget.style.background =
+                    "rgba(255, 255, 255, 0.06)";
+                  e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)";
                 }}
               >
-                ×
+                <i className="fas fa-times"></i>
               </button>
             </div>
 
             {/* Modal Form */}
-            <form
-              onSubmit={handleSubmitCustomRequest}
-              style={{ padding: "1.5rem" }}
-            >
-              {/* Employee Selection */}
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label
-                  style={{
-                    display: "block",
-                    color: "#ffffff",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Employee *
-                </label>
-                <select
-                  name="employeeId"
-                  value={customFormData.employeeId}
-                  onChange={handleCustomFormChange}
-                  required
-                  style={{
-                    width: "100%",
-                    background: "#3a3a3a",
-                    color: "#ffffff",
-                    border: "1px solid #4a4a4a",
-                    borderRadius: "0.5rem",
-                    padding: "0.875rem 1rem",
-                    fontSize: "0.875rem",
-                    outline: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select employee
-                  </option>
-                  {employees.map((emp) => (
-                    <option key={emp._id} value={emp._id}>
-                      {emp.fullName} ({emp.employeeCode})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Request Type */}
-              <div style={{ marginBottom: "1.5rem" }}>
-                <label
-                  style={{
-                    display: "block",
-                    color: "#ffffff",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Request Type *
-                </label>
-                <select
-                  name="requestType"
-                  value={customFormData.requestType}
-                  onChange={handleCustomFormChange}
-                  required
-                  style={{
-                    width: "100%",
-                    background: "#3a3a3a",
-                    color: "#ffffff",
-                    border: "1px solid #4a4a4a",
-                    borderRadius: "0.5rem",
-                    padding: "0.875rem 1rem",
-                    fontSize: "0.875rem",
-                    outline: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select type
-                  </option>
-                  <option value="WFH">العمل من المنزل</option>
-                  <option value="VACATION">إجازة</option>
-                  <option value="LATE_PERMISSION">اذن تاخير</option>
-                  <option value="EARLY_LEAVE">انصراف مبكر</option>
-                </select>
-              </div>
-
-              {/* Date Fields */}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "1rem",
-                  marginBottom: "1.5rem",
-                }}
+            <div style={{ maxHeight: "calc(90vh - 100px)", overflowY: "auto" }}>
+              <form
+                onSubmit={handleSubmitCustomRequest}
+                style={{ padding: "2rem" }}
               >
-                <div>
+                {/* Employee Selection */}
+                <div style={{ marginBottom: "1.25rem" }}>
                   <label
                     style={{
                       display: "block",
-                      color: "#ffffff",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "0.8125rem",
+                      fontWeight: "500",
                       marginBottom: "0.5rem",
                     }}
                   >
-                    Start Date
+                    Employee *
                   </label>
-                  <div style={{ position: "relative" }}>
+                  <select
+                    name="employeeId"
+                    value={customFormData.employeeId}
+                    onChange={handleCustomFormChange}
+                    required
+                    style={{
+                      width: "100%",
+                      background: "rgba(255, 255, 255, 0.04)",
+                      color: "#FFFFFF",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "10px",
+                      padding: "0.75rem 1rem",
+                      fontSize: "0.875rem",
+                      outline: "none",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#EA8303";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  >
+                    <option value="" disabled>
+                      Select employee
+                    </option>
+                    {employees.map((emp) => (
+                      <option key={emp._id} value={emp._id}>
+                        {emp.fullName} ({emp.employeeCode})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Request Type */}
+                <div style={{ marginBottom: "1.25rem" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "0.8125rem",
+                      fontWeight: "500",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Request Type *
+                  </label>
+                  <select
+                    name="requestType"
+                    value={customFormData.requestType}
+                    onChange={handleCustomFormChange}
+                    required
+                    style={{
+                      width: "100%",
+                      background: "rgba(255, 255, 255, 0.04)",
+                      color: "#FFFFFF",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                      borderRadius: "10px",
+                      padding: "0.75rem 1rem",
+                      fontSize: "0.875rem",
+                      outline: "none",
+                      cursor: "pointer",
+                      transition: "all 0.2s",
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = "#EA8303";
+                      e.target.style.boxShadow =
+                        "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                      e.target.style.boxShadow = "none";
+                    }}
+                  >
+                    <option value="" disabled>
+                      Select type
+                    </option>
+                    <option value="WFH">العمل من المنزل</option>
+                    <option value="VACATION">إجازة</option>
+                    <option value="LATE_PERMISSION">اذن تاخير</option>
+                    <option value="EARLY_LEAVE">انصراف مبكر</option>
+                  </select>
+                </div>
+
+                {/* Date Fields */}
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "1rem",
+                    marginBottom: "1.5rem",
+                  }}
+                >
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        color: "rgba(255, 255, 255, 0.7)",
+                        fontSize: "0.8125rem",
+                        fontWeight: "500",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      Start Date
+                    </label>
                     <input
                       type="date"
                       name="startDate"
@@ -1233,44 +1455,42 @@ const Dashboard = () => {
                       required
                       style={{
                         width: "100%",
-                        background: "#3a3a3a",
-                        color: "#ffffff",
-                        border: "1px solid #4a4a4a",
-                        borderRadius: "0.5rem",
-                        padding: "0.875rem 2.5rem 0.875rem 1rem",
+                        background: "rgba(255, 255, 255, 0.04)",
+                        color: "#FFFFFF",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                        borderRadius: "10px",
+                        padding: "0.75rem 1rem",
                         fontSize: "0.875rem",
                         outline: "none",
                         cursor: "pointer",
                         colorScheme: "dark",
+                        transition: "all 0.2s",
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = "#EA8303";
+                        e.target.style.boxShadow =
+                          "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor =
+                          "rgba(255, 255, 255, 0.08)";
+                        e.target.style.boxShadow = "none";
                       }}
                     />
-                    <i
-                      className="fas fa-calendar-alt"
-                      style={{
-                        position: "absolute",
-                        right: "1rem",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        color: "#9ca3af",
-                        pointerEvents: "none",
-                      }}
-                    ></i>
                   </div>
-                </div>
 
-                <div>
-                  <label
-                    style={{
-                      display: "block",
-                      color: "#ffffff",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    End Date
-                  </label>
-                  <div style={{ position: "relative" }}>
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        color: "rgba(255, 255, 255, 0.7)",
+                        fontSize: "0.8125rem",
+                        fontWeight: "500",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      End Date
+                    </label>
                     <input
                       type="date"
                       name="endDate"
@@ -1279,88 +1499,120 @@ const Dashboard = () => {
                       required
                       style={{
                         width: "100%",
-                        background: "#3a3a3a",
-                        color: "#ffffff",
-                        border: "1px solid #4a4a4a",
-                        borderRadius: "0.5rem",
-                        padding: "0.875rem 2.5rem 0.875rem 1rem",
+                        background: "rgba(255, 255, 255, 0.04)",
+                        color: "#FFFFFF",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                        borderRadius: "10px",
+                        padding: "0.75rem 1rem",
                         fontSize: "0.875rem",
                         outline: "none",
                         cursor: "pointer",
                         colorScheme: "dark",
+                        transition: "all 0.2s",
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.borderColor = "#EA8303";
+                        e.target.style.boxShadow =
+                          "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.borderColor =
+                          "rgba(255, 255, 255, 0.08)";
+                        e.target.style.boxShadow = "none";
                       }}
                     />
-                    <i
-                      className="fas fa-calendar-alt"
-                      style={{
-                        position: "absolute",
-                        right: "1rem",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        color: "#9ca3af",
-                        pointerEvents: "none",
-                      }}
-                    ></i>
                   </div>
                 </div>
-              </div>
 
-              {/* Buttons */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  gap: "1rem",
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={handleCloseCustomModal}
+                {/* Buttons */}
+                <div
                   style={{
-                    background: "#3a3a3a",
-                    color: "#ffffff",
-                    padding: "0.875rem 1.5rem",
-                    borderRadius: "0.5rem",
-                    border: "none",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    transition: "background 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.background = "#4a4a4a";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.background = "#3a3a3a";
+                    display: "flex",
+                    gap: "1rem",
+                    justifyContent: "flex-end",
                   }}
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  style={{
-                    background: loading ? "#9ca3af" : "#f97316",
-                    color: "#ffffff",
-                    padding: "0.875rem 1.5rem",
-                    borderRadius: "0.5rem",
-                    border: "none",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    cursor: loading ? "not-allowed" : "pointer",
-                    transition: "background 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!loading) e.target.style.background = "#ea580c";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!loading) e.target.style.background = "#f97316";
-                  }}
-                >
-                  {loading ? "Submitting..." : "Submit Request"}
-                </button>
-              </div>
-            </form>
+                  <button
+                    type="button"
+                    onClick={handleCloseCustomModal}
+                    style={{
+                      background: "rgba(255, 255, 255, 0.06)",
+                      backdropFilter: "blur(10px)",
+                      WebkitBackdropFilter: "blur(10px)",
+                      color: "#FFFFFF",
+                      border: "1px solid rgba(255, 255, 255, 0.15)",
+                      borderRadius: "12px",
+                      padding: "0.75rem 1.5rem",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease",
+                      boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background =
+                        "rgba(255, 255, 255, 0.12)";
+                      e.currentTarget.style.borderColor =
+                        "rgba(255, 255, 255, 0.25)";
+                      e.currentTarget.style.transform = "translateY(-2px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background =
+                        "rgba(255, 255, 255, 0.06)";
+                      e.currentTarget.style.borderColor =
+                        "rgba(255, 255, 255, 0.15)";
+                      e.currentTarget.style.transform = "translateY(0)";
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    style={{
+                      background: loading
+                        ? "rgba(255, 255, 255, 0.1)"
+                        : "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)",
+                      backdropFilter: "blur(10px)",
+                      WebkitBackdropFilter: "blur(10px)",
+                      color: "#FFFFFF",
+                      border: loading
+                        ? "none"
+                        : "1px solid rgba(255, 255, 255, 0.2)",
+                      borderRadius: "12px",
+                      padding: "0.75rem 1.5rem",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      cursor: loading ? "not-allowed" : "pointer",
+                      transition: "all 0.3s ease",
+                      boxShadow: loading
+                        ? "none"
+                        : "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!loading) {
+                        e.currentTarget.style.background =
+                          "linear-gradient(135deg, rgba(234, 131, 3, 1) 0%, rgba(234, 131, 3, 0.85) 100%)";
+                        e.currentTarget.style.boxShadow =
+                          "0 6px 20px rgba(234, 131, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+                        e.currentTarget.style.transform = "translateY(-2px)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!loading) {
+                        e.currentTarget.style.background =
+                          "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)";
+                        e.currentTarget.style.boxShadow =
+                          "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+                        e.currentTarget.style.transform = "translateY(0)";
+                      }
+                    }}
+                  >
+                    {loading ? "Submitting..." : "Submit Request"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}

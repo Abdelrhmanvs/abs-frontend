@@ -8,6 +8,8 @@
     "@fortawesome/react-fontawesome": "^0.1.16",
     "axios": "^0.24.0",
     "bootstrap": "^5.3.7",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "i18next": "^25.6.2",
     "i18next-browser-languagedetector": "^8.2.0",
     "react": "^17.0.2",
@@ -42,5 +44,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "http-proxy-middleware": "^3.0.5"
   }
 }

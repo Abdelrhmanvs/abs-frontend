@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 const HRForm = () => {
   const navigate = useNavigate();
@@ -154,124 +155,125 @@ const HRForm = () => {
     return filtered;
   };
 
-  const handleExportToExcel = () => {
+  const handleExportToExcel = async () => {
     const filteredData = getFilteredData();
 
-    // Create Excel-compatible data structure with exact columns from table
-    const excelData = filteredData.map((row, index) => ({
-      code: row.code || "",
-      "Employee / Fingerprint": row.fingerprint || "",
-      Employee: row.employeeName || "",
-      "Employee / Job Position": row.jobPosition || "",
-      "Employee / الفرع": row.branch || "",
-      "Time Off Type": row.timeOffType || "",
-      "الغرض من النموذج الإداري": row.purpose || "",
-      "Start Date": row.startDate || "",
-      "End Date": row.endDate || "",
-      "عدد الأيام": row.numberOfDays || "",
-    }));
+    // Format date as DD/MM/YYYY
+    const formatDateDDMMYYYY = (dateStr) => {
+      if (!dateStr) return "";
+      const date = new Date(dateStr);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
 
-    // Create a new workbook and worksheet
-    const worksheet = XLSX.utils.json_to_sheet(excelData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "HR Report");
+    // Create workbook and worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("HR Report");
 
-    // Enhanced column widths for better readability
-    const columnWidths = [
-      { wch: 15 }, // code
-      { wch: 22 }, // Employee / Fingerprint
-      { wch: 32 }, // Employee
-      { wch: 28 }, // Employee / Job Position
-      { wch: 22 }, // Employee / الفرع
-      { wch: 20 }, // Time Off Type
-      { wch: 38 }, // الغرض من النموذج الإداري
-      { wch: 15 }, // Start Date
-      { wch: 15 }, // End Date
-      { wch: 15 }, // عدد الأيام
+    // Define columns with headers
+    worksheet.columns = [
+      { header: "code", key: "code", width: 10 },
+      { header: "Employee/Fingerprint", key: "fingerprint", width: 22 },
+      { header: "Employee", key: "employee", width: 20 },
+      { header: "Employee/Job Position", key: "jobPosition", width: 22 },
+      { header: "Employee/الفرع", key: "branch", width: 18 },
+      { header: "Time Off Type", key: "timeOffType", width: 16 },
+      { header: "الغرض من النموذج الادارى", key: "purpose", width: 28 },
+      { header: "Start Date", key: "startDate", width: 14 },
+      { header: "End Date", key: "endDate", width: 14 },
+      { header: "عدد الايام", key: "numberOfDays", width: 12 },
     ];
-    worksheet["!cols"] = columnWidths;
 
-    const range = XLSX.utils.decode_range(worksheet["!ref"]);
+    // Add data rows - use actual values from table, not defaults
+    filteredData.forEach((row) => {
+      worksheet.addRow({
+        code: row.code || "",
+        fingerprint: row.fingerprint || "",
+        employee: row.employeeName || "",
+        jobPosition: row.jobPosition || "",
+        branch: row.branch || "",
+        timeOffType: row.timeOffType || "",
+        purpose: row.purpose || "",
+        startDate: formatDateDDMMYYYY(row.startDate),
+        endDate: formatDateDDMMYYYY(row.endDate),
+        numberOfDays: row.numberOfDays || "",
+      });
+    });
 
-    // Enhanced header row styling with professional design
-    for (let col = range.s.c; col <= range.e.c; col++) {
-      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
-      if (!worksheet[cellAddress]) continue;
-      worksheet[cellAddress].s = {
-        font: { 
-          bold: true, 
-          sz: 13, 
-          color: { rgb: "FFFFFF" },
-          name: "Calibri"
-        },
-        fill: { 
-          patternType: "solid",
-          fgColor: { rgb: "1F4E78" } // Professional dark blue
-        },
-        alignment: { 
-          horizontal: "center", 
-          vertical: "center",
-          wrapText: true
-        },
-        border: {
-          top: { style: "thin", color: { rgb: "FFFFFF" } },
-          bottom: { style: "medium", color: { rgb: "1F4E78" } },
-          left: { style: "thin", color: { rgb: "FFFFFF" } },
-          right: { style: "thin", color: { rgb: "FFFFFF" } }
-        }
+    // Style header row - dark background with white text
+    const headerRow = worksheet.getRow(1);
+    headerRow.height = 28;
+    headerRow.eachCell((cell) => {
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FF2D2D31" }, // Dark gray
       };
-    }
+      cell.font = {
+        bold: true,
+        color: { argb: "FFFFFFFF" }, // White text
+        size: 11,
+        name: "Calibri",
+      };
+      cell.alignment = {
+        horizontal: "center",
+        vertical: "middle",
+        wrapText: true,
+      };
+      cell.border = {
+        top: { style: "thin", color: { argb: "FF4A4A4A" } },
+        bottom: { style: "thin", color: { argb: "FF4A4A4A" } },
+        left: { style: "thin", color: { argb: "FF4A4A4A" } },
+        right: { style: "thin", color: { argb: "FF4A4A4A" } },
+      };
+    });
 
-    // Style data rows with alternating colors and borders
-    for (let row = range.s.r + 1; row <= range.e.r; row++) {
-      const isEvenRow = row % 2 === 0;
-      for (let col = range.s.c; col <= range.e.c; col++) {
-        const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
-        if (!worksheet[cellAddress]) continue;
-        
-        worksheet[cellAddress].s = {
-          font: { 
-            sz: 11,
-            name: "Calibri",
-            color: { rgb: "000000" }
-          },
-          fill: { 
-            patternType: "solid",
-            fgColor: { rgb: isEvenRow ? "F2F2F2" : "FFFFFF" } // Alternating rows
-          },
-          alignment: { 
-            horizontal: col === 0 ? "center" : "left", // Center code column
-            vertical: "center",
-            wrapText: true
-          },
-          border: {
-            top: { style: "thin", color: { rgb: "D9D9D9" } },
-            bottom: { style: "thin", color: { rgb: "D9D9D9" } },
-            left: { style: "thin", color: { rgb: "D9D9D9" } },
-            right: { style: "thin", color: { rgb: "D9D9D9" } }
-          }
+    // Style data rows - white background with green borders
+    for (let i = 2; i <= worksheet.rowCount; i++) {
+      const row = worksheet.getRow(i);
+      row.height = 22;
+      row.eachCell((cell) => {
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FFFFFFFF" }, // White background
         };
-      }
+        cell.font = {
+          size: 11,
+          name: "Calibri",
+          color: { argb: "FF000000" },
+        };
+        cell.alignment = {
+          horizontal: "center",
+          vertical: "middle",
+        };
+        cell.border = {
+          top: { style: "thin", color: { argb: "FF538135" } }, // Green border
+          bottom: { style: "thin", color: { argb: "FF538135" } },
+          left: { style: "thin", color: { argb: "FF538135" } },
+          right: { style: "thin", color: { argb: "FF538135" } },
+        };
+      });
     }
 
-    // Set row heights for better spacing
-    const rowHeights = [];
-    rowHeights[0] = { hpx: 35 }; // Header row height
-    for (let i = 1; i <= range.e.r; i++) {
-      rowHeights[i] = { hpx: 25 }; // Data row height
-    }
-    worksheet["!rows"] = rowHeights;
-
-    // Add filters to header row
-    worksheet["!autofilter"] = { ref: worksheet["!ref"] };
+    // Add autofilter
+    worksheet.autoFilter = {
+      from: { row: 1, column: 1 },
+      to: { row: 1, column: 10 },
+    };
 
     // Freeze header row
-    worksheet["!freeze"] = { xSplit: 0, ySplit: 1 };
+    worksheet.views = [{ state: "frozen", ySplit: 1 }];
 
-    // Generate Excel file with company name and date
+    // Generate and download file
     const dateStr = new Date().toISOString().split("T")[0];
-    const fileName = `HR_Report_${dateStr}.xlsx`;
-    XLSX.writeFile(workbook, fileName);
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    saveAs(blob, `HR_Report_${dateStr}.xlsx`);
   };
 
   const renderEditableCell = (row, field) => {
@@ -291,30 +293,19 @@ const HRForm = () => {
               onKeyDown={(e) => handleKeyDown(e, row.id, field)}
               autoFocus
               style={{
-                background: "#1a1a1a",
-                color: "#ffffff",
-                border: "1px solid #f97316",
-                borderRadius: "0.25rem",
-                padding: "0.25rem 2rem 0.25rem 0.5rem",
+                background: "rgba(255, 255, 255, 0.04)",
+                color: "#FFFFFF",
+                border: "1px solid #EA8303",
+                borderRadius: "6px",
+                padding: "0.25rem 0.5rem",
                 fontSize: "0.875rem",
                 outline: "none",
                 width: "100%",
                 cursor: "pointer",
                 colorScheme: "dark",
+                boxShadow: "0 0 0 3px rgba(234, 131, 3, 0.1)",
               }}
             />
-            <i
-              className="fas fa-calendar-alt"
-              style={{
-                position: "absolute",
-                right: "0.5rem",
-                top: "50%",
-                transform: "translateY(-50%)",
-                color: "#9ca3af",
-                pointerEvents: "none",
-                fontSize: "0.75rem",
-              }}
-            ></i>
           </div>
         );
       }
@@ -328,14 +319,15 @@ const HRForm = () => {
           onKeyDown={(e) => handleKeyDown(e, row.id, field)}
           autoFocus
           style={{
-            background: "#1a1a1a",
-            color: "#ffffff",
-            border: "1px solid #f97316",
-            borderRadius: "0.25rem",
+            background: "rgba(255, 255, 255, 0.04)",
+            color: "#FFFFFF",
+            border: "1px solid #EA8303",
+            borderRadius: "6px",
             padding: "0.25rem 0.5rem",
             fontSize: "0.875rem",
             outline: "none",
             width: "100%",
+            boxShadow: "0 0 0 3px rgba(234, 131, 3, 0.1)",
           }}
         />
       );
@@ -348,10 +340,11 @@ const HRForm = () => {
           cursor: "pointer",
           padding: "0.25rem 0.5rem",
           minHeight: "1.5rem",
-          borderRadius: "0.25rem",
+          borderRadius: "6px",
+          transition: "background 0.15s",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = "#3a3a3a";
+          e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.background = "transparent";
@@ -365,24 +358,17 @@ const HRForm = () => {
   const filteredData = getFilteredData();
 
   return (
-    <div
-      style={{
-        marginLeft: "235px",
-        marginTop: "65px",
-        minHeight: "calc(100vh - 65px)",
-        background: "#1a1a1a",
-        overflowX: "hidden",
-        padding: "2rem",
-      }}
-    >
+    <div style={{ background: "#2D2D31", minHeight: "100vh", padding: "2rem" }}>
       {/* Main Content */}
       <div>
         {/* HR Export Form Section */}
         <div
+          className="animate-fadeInUp hover-lift"
           style={{
-            background: "#2d2d2d",
-            borderRadius: "0.75rem",
+            background: "#1E1E1E",
+            borderRadius: "16px",
             padding: "1.5rem",
+            border: "1px solid rgba(255, 255, 255, 0.06)",
           }}
         >
           {/* Header with filters and export button */}
@@ -398,29 +384,45 @@ const HRForm = () => {
           >
             <h2
               style={{
-                fontSize: "1.25rem",
+                fontSize: "1.125rem",
                 fontWeight: "600",
-                color: "#ffffff",
+                color: "#FFFFFF",
                 margin: 0,
               }}
             >
               HR Export Form
             </h2>
 
-            <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "0.75rem",
+                alignItems: "center",
+                flexWrap: "wrap",
+              }}
+            >
               {/* Request Type Filter */}
               <select
                 value={selectedRequestType}
                 onChange={(e) => setSelectedRequestType(e.target.value)}
                 style={{
-                  background: "#3a3a3a",
-                  color: "#ffffff",
-                  border: "1px solid #4a4a4a",
-                  borderRadius: "0.5rem",
-                  padding: "0.75rem 1rem",
+                  background: "rgba(255, 255, 255, 0.04)",
+                  color: "#FFFFFF",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "10px",
+                  padding: "0.625rem 1rem",
                   fontSize: "0.875rem",
                   cursor: "pointer",
                   outline: "none",
+                  transition: "all 0.2s",
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#EA8303";
+                  e.target.style.boxShadow = "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                  e.target.style.boxShadow = "none";
                 }}
               >
                 <option value="All Request Types">All Request Types</option>
@@ -429,70 +431,67 @@ const HRForm = () => {
               </select>
 
               {/* Date Filter */}
-              <div style={{ position: "relative" }}>
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  style={{
-                    background: "#3a3a3a",
-                    color: "#ffffff",
-                    border: "1px solid #4a4a4a",
-                    borderRadius: "0.5rem",
-                    padding: "0.75rem 2.5rem 0.75rem 1rem",
-                    fontSize: "0.875rem",
-                    outline: "none",
-                    width: "150px",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                    colorScheme: "dark",
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = "#f97316";
-                    e.target.style.boxShadow =
-                      "0 0 0 3px rgba(249, 115, 22, 0.1)";
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = "#4a4a4a";
-                    e.target.style.boxShadow = "none";
-                  }}
-                />
-                <i
-                  className="fas fa-calendar-alt"
-                  style={{
-                    position: "absolute",
-                    right: "1rem",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    color: "#9ca3af",
-                    pointerEvents: "none",
-                    fontSize: "0.875rem",
-                  }}
-                ></i>
-              </div>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                style={{
+                  background: "rgba(255, 255, 255, 0.04)",
+                  color: "#FFFFFF",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "10px",
+                  padding: "0.625rem 1rem",
+                  fontSize: "0.875rem",
+                  outline: "none",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  colorScheme: "dark",
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#EA8303";
+                  e.target.style.boxShadow = "0 0 0 3px rgba(234, 131, 3, 0.1)";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
+                  e.target.style.boxShadow = "none";
+                }}
+              />
 
               {/* Export Button */}
               <button
                 onClick={handleExportToExcel}
                 style={{
-                  background: "#f97316",
-                  color: "#ffffff",
-                  padding: "0.75rem 1.5rem",
-                  borderRadius: "0.5rem",
-                  border: "none",
+                  background:
+                    "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)",
+                  backdropFilter: "blur(10px)",
+                  WebkitBackdropFilter: "blur(10px)",
+                  color: "#FFFFFF",
+                  padding: "0.625rem 1.25rem",
+                  borderRadius: "12px",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
                   fontSize: "0.875rem",
-                  fontWeight: "600",
+                  fontWeight: "500",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   gap: "0.5rem",
-                  transition: "background 0.2s",
+                  transition: "all 0.3s ease",
+                  boxShadow:
+                    "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.background = "#ea580c";
+                  e.currentTarget.style.background =
+                    "linear-gradient(135deg, rgba(234, 131, 3, 1) 0%, rgba(234, 131, 3, 0.85) 100%)";
+                  e.currentTarget.style.boxShadow =
+                    "0 6px 20px rgba(234, 131, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+                  e.currentTarget.style.transform = "translateY(-2px)";
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.background = "#f97316";
+                  e.currentTarget.style.background =
+                    "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)";
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+                  e.currentTarget.style.transform = "translateY(0)";
                 }}
               >
                 <i className="fas fa-file-excel"></i>
@@ -504,19 +503,24 @@ const HRForm = () => {
                 onClick={handleDeleteAll}
                 disabled={hrData.length === 0}
                 style={{
-                  background: hrData.length === 0 ? "#6b7280" : "#ef4444",
-                  color: "#ffffff",
-                  padding: "0.75rem 1.5rem",
-                  borderRadius: "0.5rem",
+                  background:
+                    hrData.length === 0
+                      ? "rgba(255, 255, 255, 0.1)"
+                      : "#ef4444",
+                  color:
+                    hrData.length === 0
+                      ? "rgba(255, 255, 255, 0.4)"
+                      : "#FFFFFF",
+                  padding: "0.625rem 1.25rem",
+                  borderRadius: "10px",
                   border: "none",
                   fontSize: "0.875rem",
-                  fontWeight: "600",
+                  fontWeight: "500",
                   cursor: hrData.length === 0 ? "not-allowed" : "pointer",
                   display: "flex",
                   alignItems: "center",
                   gap: "0.5rem",
-                  transition: "background 0.2s",
-                  opacity: hrData.length === 0 ? 0.5 : 1,
+                  transition: "all 0.2s",
                 }}
                 onMouseEnter={(e) => {
                   if (hrData.length > 0) {
@@ -548,20 +552,37 @@ const HRForm = () => {
               <div
                 style={{
                   textAlign: "center",
-                  padding: "2rem",
-                  color: "#9ca3af",
+                  padding: "3rem",
+                  color: "rgba(255, 255, 255, 0.5)",
                 }}
               >
+                <i
+                  className="fas fa-spinner fa-spin"
+                  style={{
+                    fontSize: "1.5rem",
+                    marginBottom: "0.75rem",
+                    display: "block",
+                  }}
+                ></i>
                 Loading approved requests...
               </div>
             ) : filteredData.length === 0 ? (
               <div
                 style={{
                   textAlign: "center",
-                  padding: "2rem",
-                  color: "#9ca3af",
+                  padding: "3rem",
+                  color: "rgba(255, 255, 255, 0.5)",
                 }}
               >
+                <i
+                  className="fas fa-inbox"
+                  style={{
+                    fontSize: "2rem",
+                    marginBottom: "0.75rem",
+                    display: "block",
+                    opacity: 0.5,
+                  }}
+                ></i>
                 No approved requests found
               </div>
             ) : (
@@ -572,15 +593,17 @@ const HRForm = () => {
                 }}
               >
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #404040" }}>
+                  <tr style={{ background: "rgba(255, 255, 255, 0.03)" }}>
                     <th
                       style={{
                         textAlign: "left",
-                        padding: "1rem",
-                        color: "#9ca3af",
+                        padding: "0.875rem 1rem",
+                        color: "rgba(255, 255, 255, 0.5)",
                         fontWeight: "500",
-                        fontSize: "0.875rem",
+                        fontSize: "0.75rem",
                         whiteSpace: "nowrap",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                       }}
                     >
                       code
@@ -588,11 +611,13 @@ const HRForm = () => {
                     <th
                       style={{
                         textAlign: "left",
-                        padding: "1rem",
-                        color: "#9ca3af",
+                        padding: "0.875rem 1rem",
+                        color: "rgba(255, 255, 255, 0.5)",
                         fontWeight: "500",
-                        fontSize: "0.875rem",
+                        fontSize: "0.75rem",
                         whiteSpace: "nowrap",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                       }}
                     >
                       Employee / Fingerprint
@@ -600,11 +625,13 @@ const HRForm = () => {
                     <th
                       style={{
                         textAlign: "left",
-                        padding: "1rem",
-                        color: "#9ca3af",
+                        padding: "0.875rem 1rem",
+                        color: "rgba(255, 255, 255, 0.5)",
                         fontWeight: "500",
-                        fontSize: "0.875rem",
+                        fontSize: "0.75rem",
                         whiteSpace: "nowrap",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                       }}
                     >
                       Employee
@@ -612,11 +639,13 @@ const HRForm = () => {
                     <th
                       style={{
                         textAlign: "left",
-                        padding: "1rem",
-                        color: "#9ca3af",
+                        padding: "0.875rem 1rem",
+                        color: "rgba(255, 255, 255, 0.5)",
                         fontWeight: "500",
-                        fontSize: "0.875rem",
+                        fontSize: "0.75rem",
                         whiteSpace: "nowrap",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                       }}
                     >
                       Employee / Job Position
@@ -624,11 +653,13 @@ const HRForm = () => {
                     <th
                       style={{
                         textAlign: "left",
-                        padding: "1rem",
-                        color: "#9ca3af",
+                        padding: "0.875rem 1rem",
+                        color: "rgba(255, 255, 255, 0.5)",
                         fontWeight: "500",
-                        fontSize: "0.875rem",
+                        fontSize: "0.75rem",
                         whiteSpace: "nowrap",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                       }}
                     >
                       Employee / الفرع
@@ -636,11 +667,13 @@ const HRForm = () => {
                     <th
                       style={{
                         textAlign: "left",
-                        padding: "1rem",
-                        color: "#9ca3af",
+                        padding: "0.875rem 1rem",
+                        color: "rgba(255, 255, 255, 0.5)",
                         fontWeight: "500",
-                        fontSize: "0.875rem",
+                        fontSize: "0.75rem",
                         whiteSpace: "nowrap",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                       }}
                     >
                       Time Off Type
@@ -648,11 +681,13 @@ const HRForm = () => {
                     <th
                       style={{
                         textAlign: "left",
-                        padding: "1rem",
-                        color: "#9ca3af",
+                        padding: "0.875rem 1rem",
+                        color: "rgba(255, 255, 255, 0.5)",
                         fontWeight: "500",
-                        fontSize: "0.875rem",
+                        fontSize: "0.75rem",
                         whiteSpace: "nowrap",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                       }}
                     >
                       الغرض من النموذج الإداري
@@ -660,11 +695,13 @@ const HRForm = () => {
                     <th
                       style={{
                         textAlign: "left",
-                        padding: "1rem",
-                        color: "#9ca3af",
+                        padding: "0.875rem 1rem",
+                        color: "rgba(255, 255, 255, 0.5)",
                         fontWeight: "500",
-                        fontSize: "0.875rem",
+                        fontSize: "0.75rem",
                         whiteSpace: "nowrap",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                       }}
                     >
                       Start Date
@@ -672,11 +709,13 @@ const HRForm = () => {
                     <th
                       style={{
                         textAlign: "left",
-                        padding: "1rem",
-                        color: "#9ca3af",
+                        padding: "0.875rem 1rem",
+                        color: "rgba(255, 255, 255, 0.5)",
                         fontWeight: "500",
-                        fontSize: "0.875rem",
+                        fontSize: "0.75rem",
                         whiteSpace: "nowrap",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                       }}
                     >
                       End Date
@@ -684,11 +723,13 @@ const HRForm = () => {
                     <th
                       style={{
                         textAlign: "left",
-                        padding: "1rem",
-                        color: "#9ca3af",
+                        padding: "0.875rem 1rem",
+                        color: "rgba(255, 255, 255, 0.5)",
                         fontWeight: "500",
-                        fontSize: "0.875rem",
+                        fontSize: "0.75rem",
                         whiteSpace: "nowrap",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                       }}
                     >
                       عدد الأيام
@@ -696,11 +737,13 @@ const HRForm = () => {
                     <th
                       style={{
                         textAlign: "center",
-                        padding: "1rem",
-                        color: "#9ca3af",
+                        padding: "0.875rem 1rem",
+                        color: "rgba(255, 255, 255, 0.5)",
                         fontWeight: "500",
-                        fontSize: "0.875rem",
+                        fontSize: "0.75rem",
                         whiteSpace: "nowrap",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05em",
                       }}
                     >
                       Actions
@@ -708,15 +751,28 @@ const HRForm = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredData.map((row) => (
+                  {filteredData.map((row, index) => (
                     <tr
                       key={row.id}
-                      style={{ borderBottom: "1px solid #404040" }}
+                      style={{
+                        borderBottom:
+                          index < filteredData.length - 1
+                            ? "1px solid rgba(255, 255, 255, 0.06)"
+                            : "none",
+                        transition: "background 0.15s",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background =
+                          "rgba(255, 255, 255, 0.02)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "transparent";
+                      }}
                     >
                       <td
                         style={{
                           padding: "1rem",
-                          color: "#ffffff",
+                          color: "rgba(255, 255, 255, 0.8)",
                           fontSize: "0.875rem",
                         }}
                       >
@@ -725,7 +781,7 @@ const HRForm = () => {
                       <td
                         style={{
                           padding: "1rem",
-                          color: "#ffffff",
+                          color: "rgba(255, 255, 255, 0.8)",
                           fontSize: "0.875rem",
                         }}
                       >
@@ -734,8 +790,9 @@ const HRForm = () => {
                       <td
                         style={{
                           padding: "1rem",
-                          color: "#ffffff",
+                          color: "#FFFFFF",
                           fontSize: "0.875rem",
+                          fontWeight: "500",
                         }}
                       >
                         {renderEditableCell(row, "employeeName")}
@@ -743,7 +800,7 @@ const HRForm = () => {
                       <td
                         style={{
                           padding: "1rem",
-                          color: "#ffffff",
+                          color: "rgba(255, 255, 255, 0.8)",
                           fontSize: "0.875rem",
                         }}
                       >
@@ -752,7 +809,7 @@ const HRForm = () => {
                       <td
                         style={{
                           padding: "1rem",
-                          color: "#ffffff",
+                          color: "rgba(255, 255, 255, 0.8)",
                           fontSize: "0.875rem",
                         }}
                       >
@@ -761,7 +818,7 @@ const HRForm = () => {
                       <td
                         style={{
                           padding: "1rem",
-                          color: "#ffffff",
+                          color: "rgba(255, 255, 255, 0.8)",
                           fontSize: "0.875rem",
                         }}
                       >
@@ -770,7 +827,7 @@ const HRForm = () => {
                       <td
                         style={{
                           padding: "1rem",
-                          color: "#ffffff",
+                          color: "rgba(255, 255, 255, 0.8)",
                           fontSize: "0.875rem",
                         }}
                       >
@@ -779,7 +836,7 @@ const HRForm = () => {
                       <td
                         style={{
                           padding: "1rem",
-                          color: "#ffffff",
+                          color: "rgba(255, 255, 255, 0.8)",
                           fontSize: "0.875rem",
                           whiteSpace: "nowrap",
                         }}
@@ -789,7 +846,7 @@ const HRForm = () => {
                       <td
                         style={{
                           padding: "1rem",
-                          color: "#ffffff",
+                          color: "rgba(255, 255, 255, 0.8)",
                           fontSize: "0.875rem",
                           whiteSpace: "nowrap",
                         }}
@@ -799,7 +856,7 @@ const HRForm = () => {
                       <td
                         style={{
                           padding: "1rem",
-                          color: "#ffffff",
+                          color: "rgba(255, 255, 255, 0.8)",
                           fontSize: "0.875rem",
                           textAlign: "center",
                         }}
@@ -815,26 +872,32 @@ const HRForm = () => {
                         <button
                           onClick={() => handleDelete(row.id)}
                           style={{
-                            background: "#ef4444",
-                            color: "#ffffff",
+                            background: "rgba(239, 68, 68, 0.15)",
+                            color: "#ef4444",
                             border: "none",
-                            borderRadius: "0.375rem",
+                            borderRadius: "8px",
                             padding: "0.5rem 0.75rem",
-                            fontSize: "0.875rem",
+                            fontSize: "0.8125rem",
                             cursor: "pointer",
-                            transition: "background 0.2s",
+                            transition: "all 0.2s",
                             display: "inline-flex",
                             alignItems: "center",
-                            gap: "0.5rem",
+                            gap: "0.375rem",
                           }}
                           onMouseEnter={(e) => {
-                            e.target.style.background = "#dc2626";
+                            e.currentTarget.style.background = "#ef4444";
+                            e.currentTarget.style.color = "#FFFFFF";
                           }}
                           onMouseLeave={(e) => {
-                            e.target.style.background = "#ef4444";
+                            e.currentTarget.style.background =
+                              "rgba(239, 68, 68, 0.15)";
+                            e.currentTarget.style.color = "#ef4444";
                           }}
                         >
-                          <i className="fas fa-trash"></i>
+                          <i
+                            className="fas fa-trash"
+                            style={{ fontSize: "0.75rem" }}
+                          ></i>
                           Delete
                         </button>
                       </td>

@@ -19,24 +19,60 @@ const PersistLogin = () => {
       } catch (err) {
         console.error(err);
       } finally {
-        isMounted && setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
-    // Avoids unwanted call to verifyRefreshToken
-    !auth?.accessToken && persist ? verifyRefreshToken() : setIsLoading(false);
+    // Only verify if we don't have an access token and persist is enabled
+    if (!auth?.accessToken && persist) {
+      verifyRefreshToken();
+    } else {
+      setIsLoading(false);
+    }
 
-    return () => (isMounted = false);
-  }, []);
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Only run once on mount
 
-  useEffect(() => {
-    console.log(`isLoading: ${isLoading}`);
-    console.log(`aT: ${JSON.stringify(auth)}`);
-  }, [isLoading]);
+  // Don't show loading for non-persist mode or if auth already exists
+  if (!persist) {
+    return <Outlet />;
+  }
 
-  return (
-    <>{!persist ? <Outlet /> : isLoading ? <p>Loading...</p> : <Outlet />}</>
-  );
+  // Show a minimal loading indicator that doesn't cause layout shift
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#1a1a1a",
+          zIndex: 9999,
+        }}
+      >
+        <div
+          style={{
+            color: "#f97316",
+            fontSize: "1.5rem",
+            fontWeight: "600",
+          }}
+        >
+          Loading...
+        </div>
+      </div>
+    );
+  }
+
+  return <Outlet />;
 };
 
 export default PersistLogin;
