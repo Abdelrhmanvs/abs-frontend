@@ -1163,9 +1163,14 @@ const AddEmployee = () => {
                     <option value="RA" style={{ background: "#1E1E1E" }}>
                       RA
                     </option>
+                    <option
+                      value="Mobile App Developer"
+                      style={{ background: "#1E1E1E" }}
+                    >
+                      Mobile App Developer
+                    </option>
                   </select>
                 </div>
-
                 {/* Buttons */}
                 <div
                   style={{
