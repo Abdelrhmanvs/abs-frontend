@@ -381,6 +381,20 @@ const AddEmployee = () => {
                       letterSpacing: "0.05em",
                     }}
                   >
+                    Fingerprint Code
+                  </th>
+                  <th
+                    style={{
+                      textAlign: "left",
+                      padding: "0.875rem 1rem",
+                      color: "rgba(255, 255, 255, 0.5)",
+                      fontWeight: "500",
+                      fontSize: "0.75rem",
+                      whiteSpace: "nowrap",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
                     Email
                   </th>
                   <th
@@ -439,6 +453,7 @@ const AddEmployee = () => {
                   >
                     Branch
                   </th>
+
                   <th
                     style={{
                       textAlign: "center",
@@ -500,6 +515,15 @@ const AddEmployee = () => {
                         fontSize: "0.875rem",
                       }}
                     >
+                      {employee.fingerprintCode || "-"}
+                    </td>
+                    <td
+                      style={{
+                        padding: "1rem",
+                        color: "rgba(255, 255, 255, 0.8)",
+                        fontSize: "0.875rem",
+                      }}
+                    >
                       {employee.email || "-"}
                     </td>
                     <td
@@ -538,6 +562,7 @@ const AddEmployee = () => {
                     >
                       {employee.branch || "-"}
                     </td>
+
                     <td
                       style={{
                         padding: "1rem",

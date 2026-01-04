@@ -319,12 +319,20 @@ const AddFromHome = () => {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        marginLeft: "235px",
+        marginTop: "65px",
+        minHeight: "calc(100vh - 65px)",
+        background: "#1a1a1a",
+        padding: "2rem",
+      }}
+    >
       {/* Header Section */}
       <div style={{ marginBottom: "2rem" }}>
         <div
-          className="flex-responsive"
           style={{
+            display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
           }}
@@ -752,7 +760,7 @@ const AddFromHome = () => {
                         setShowDropdown(true);
                         setError("");
                       }}
-                      placeholder="Search employee name or code..."
+                      placeholder="Search employee name or fingerprint..."
                       style={{
                         width: "100%",
                         background: "#3a3a3a",
@@ -981,6 +989,8 @@ const AddFromHome = () => {
                               e.target.value
                             )
                           }
+                          min={weekRange.start}
+                          max={weekRange.end}
                           placeholder="Start Date"
                           style={{
                             width: "100%",
@@ -1031,7 +1041,8 @@ const AddFromHome = () => {
                               e.target.value
                             )
                           }
-                          min={range.startDate}
+                          min={range.startDate || weekRange.start}
+                          max={weekRange.end}
                           placeholder="End Date"
                           style={{
                             width: "100%",
