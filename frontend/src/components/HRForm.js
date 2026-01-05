@@ -16,6 +16,7 @@ const HRForm = () => {
   const [hrData, setHrData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingCell, setEditingCell] = useState(null);
+  const [dirtyRows, setDirtyRows] = useState({});
   // Sort state
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -31,9 +32,12 @@ const HRForm = () => {
     try {
       setLoading(true);
       const response = await axiosPrivate.get("/requests/approved");
-
+      console.log("[HRForm] Fetched /requests/approved:", response.data);
       if (response?.data && Array.isArray(response.data)) {
-        setHrData(response.data);
+        setHrData((prev) => {
+          console.log("[HRForm] setHrData called with:", response.data);
+          return response.data;
+        });
       } else {
         setHrData([]);
       }
@@ -59,24 +63,40 @@ const HRForm = () => {
     setEditingCell({ rowId, field });
   };
 
-  // Save cell change to backend
   const saveCellChange = async (rowId, updatedRow) => {
+    // Save cell change to backend
+    // Map HR form row to backend f:", row);
     try {
       const payload = {
         startDate: updatedRow.startDate,
         endDate: updatedRow.endDate,
         numberOfDays: updatedRow.numberOfDays,
         notes: updatedRow.notes,
-        reason: updatedRow.reason,
+        purpose: updatedRow.purpose,
+        type: updatedRow.timeOffType == "ماموريه" ? "WFH" : "",
       };
+      console.log(
+        "Saving changes for row ID:",
+        rowId,
+        "with payload:",
+        payload
+      );
       await axiosPrivate.patch(`/requests/${rowId}`, payload);
     } catch (error) {
       console.error("Error saving changes:", error);
-      alert("Failed to save changes");
+      if (error?.response) {
+        console.error("Backend error response:", error.response.data);
+        alert(
+          "Failed to save changes: " +
+            (error.response.data?.message || "Unknown error")
+        );
+      } else {
+        alert("Failed to save changes");
+      }
     }
   };
 
-  // Only update local state on change
+  // Only update local state on change, and mark row as dirty
   const handleCellChange = (rowId, field, value) => {
     setHrData((prevData) =>
       prevData.map((row) =>
@@ -96,14 +116,11 @@ const HRForm = () => {
           : row
       )
     );
+    setDirtyRows((prev) => ({ ...prev, [rowId]: true }));
   };
 
-  // Save to backend on blur
-  const handleCellBlur = (rowId) => {
-    const row = hrData.find((r) => r.id === rowId);
-    if (row) {
-      saveCellChange(rowId, row);
-    }
+  // Disable auto-save on blur; just exit editing mode
+  const handleCellBlur = () => {
     setEditingCell(null);
   };
 
@@ -333,13 +350,14 @@ const HRForm = () => {
 
   const renderEditableCell = (row, field) => {
     const value = row[field] || "";
+    const rowKey = row.id;
 
     if (NON_EDITABLE_FIELDS.includes(field)) {
       return value || "-";
     }
 
     const isEditing =
-      editingCell?.rowId === row.id && editingCell?.field === field;
+      editingCell?.rowId === rowKey && editingCell?.field === field;
 
     if (isEditing) {
       if (field === "startDate" || field === "endDate") {
@@ -348,9 +366,9 @@ const HRForm = () => {
             <input
               type="date"
               value={value}
-              onChange={(e) => handleCellChange(row.id, field, e.target.value)}
-              onBlur={() => handleCellBlur(row.id)}
-              onKeyDown={(e) => handleKeyDown(e, row.id, field)}
+              onChange={(e) => handleCellChange(rowKey, field, e.target.value)}
+              onBlur={() => handleCellBlur(rowKey)}
+              onKeyDown={(e) => handleKeyDown(e, rowKey, field)}
               autoFocus
               style={{
                 background: "rgba(255, 255, 255, 0.04)",
@@ -374,9 +392,9 @@ const HRForm = () => {
         <input
           type="text"
           value={value}
-          onChange={(e) => handleCellChange(row.id, field, e.target.value)}
-          onBlur={() => handleCellBlur(row.id)}
-          onKeyDown={(e) => handleKeyDown(e, row.id, field)}
+          onChange={(e) => handleCellChange(rowKey, field, e.target.value)}
+          onBlur={() => handleCellBlur(rowKey)}
+          onKeyDown={(e) => handleKeyDown(e, rowKey, field)}
           autoFocus
           style={{
             background: "rgba(255, 255, 255, 0.04)",
@@ -395,7 +413,7 @@ const HRForm = () => {
 
     return (
       <div
-        onClick={() => handleCellClick(row.id, field)}
+        onClick={() => handleCellClick(rowKey, field)}
         style={{
           cursor: "pointer",
           padding: "0.25rem 0.5rem",
@@ -842,158 +860,204 @@ const HRForm = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredData.map((row, index) => (
-                    <tr
-                      key={row.id}
-                      style={{
-                        borderBottom:
-                          index < filteredData.length - 1
-                            ? "1px solid rgba(255, 255, 255, 0.06)"
-                            : "none",
-                        transition: "background 0.15s",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background =
-                          "rgba(255, 255, 255, 0.02)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = "transparent";
-                      }}
-                    >
-                      <td
+                  {filteredData.map((row, index) => {
+                    const rowKey = row.id;
+                    return (
+                      <tr
+                        key={rowKey}
                         style={{
-                          padding: "1rem",
-                          color: "rgba(255, 255, 255, 0.8)",
-                          fontSize: "0.875rem",
+                          borderBottom:
+                            index < filteredData.length - 1
+                              ? "1px solid rgba(255, 255, 255, 0.06)"
+                              : "none",
+                          transition: "background 0.15s",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background =
+                            "rgba(255, 255, 255, 0.02)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "transparent";
                         }}
                       >
-                        {renderEditableCell(row, "code")}
-                      </td>
-                      <td
-                        style={{
-                          padding: "1rem",
-                          color: "rgba(255, 255, 255, 0.8)",
-                          fontSize: "0.875rem",
-                        }}
-                      >
-                        {renderEditableCell(row, "fingerprint")}
-                      </td>
-                      <td
-                        style={{
-                          padding: "1rem",
-                          color: "#FFFFFF",
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                        }}
-                      >
-                        {renderEditableCell(row, "employeeName")}
-                      </td>
-                      <td
-                        style={{
-                          padding: "1rem",
-                          color: "rgba(255, 255, 255, 0.8)",
-                          fontSize: "0.875rem",
-                        }}
-                      >
-                        {renderEditableCell(row, "jobPosition")}
-                      </td>
-                      <td
-                        style={{
-                          padding: "1rem",
-                          color: "rgba(255, 255, 255, 0.8)",
-                          fontSize: "0.875rem",
-                        }}
-                      >
-                        {renderEditableCell(row, "branch")}
-                      </td>
-                      <td
-                        style={{
-                          padding: "1rem",
-                          color: "rgba(255, 255, 255, 0.8)",
-                          fontSize: "0.875rem",
-                        }}
-                      >
-                        {renderEditableCell(row, "timeOffType")}
-                      </td>
-                      <td
-                        style={{
-                          padding: "1rem",
-                          color: "rgba(255, 255, 255, 0.8)",
-                          fontSize: "0.875rem",
-                        }}
-                      >
-                        {renderEditableCell(row, "purpose")}
-                      </td>
-                      <td
-                        style={{
-                          padding: "1rem",
-                          color: "rgba(255, 255, 255, 0.8)",
-                          fontSize: "0.875rem",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {renderEditableCell(row, "startDate")}
-                      </td>
-                      <td
-                        style={{
-                          padding: "1rem",
-                          color: "rgba(255, 255, 255, 0.8)",
-                          fontSize: "0.875rem",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {renderEditableCell(row, "endDate")}
-                      </td>
-                      <td
-                        style={{
-                          padding: "1rem",
-                          color: "rgba(255, 255, 255, 0.8)",
-                          fontSize: "0.875rem",
-                          textAlign: "center",
-                        }}
-                      >
-                        {renderEditableCell(row, "numberOfDays")}
-                      </td>
-                      <td
-                        style={{
-                          padding: "1rem",
-                          textAlign: "center",
-                        }}
-                      >
-                        <button
-                          onClick={() => handleDelete(row.id)}
+                        <td
                           style={{
-                            background: "rgba(239, 68, 68, 0.15)",
-                            color: "#ef4444",
-                            border: "none",
-                            borderRadius: "8px",
-                            padding: "0.5rem 0.75rem",
-                            fontSize: "0.8125rem",
-                            cursor: "pointer",
-                            transition: "all 0.2s",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "0.375rem",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = "#ef4444";
-                            e.currentTarget.style.color = "#FFFFFF";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background =
-                              "rgba(239, 68, 68, 0.15)";
-                            e.currentTarget.style.color = "#ef4444";
+                            padding: "1rem",
+                            color: "rgba(255, 255, 255, 0.8)",
+                            fontSize: "0.875rem",
                           }}
                         >
-                          <i
-                            className="fas fa-trash"
-                            style={{ fontSize: "0.75rem" }}
-                          ></i>
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                          {renderEditableCell(row, "code")}
+                        </td>
+                        <td
+                          style={{
+                            padding: "1rem",
+                            color: "rgba(255, 255, 255, 0.8)",
+                            fontSize: "0.875rem",
+                          }}
+                        >
+                          {renderEditableCell(row, "fingerprint")}
+                        </td>
+                        <td
+                          style={{
+                            padding: "1rem",
+                            color: "#FFFFFF",
+                            fontSize: "0.875rem",
+                            fontWeight: "500",
+                          }}
+                        >
+                          {renderEditableCell(row, "employeeName")}
+                        </td>
+                        <td
+                          style={{
+                            padding: "1rem",
+                            color: "rgba(255, 255, 255, 0.8)",
+                            fontSize: "0.875rem",
+                          }}
+                        >
+                          {renderEditableCell(row, "jobPosition")}
+                        </td>
+                        <td
+                          style={{
+                            padding: "1rem",
+                            color: "rgba(255, 255, 255, 0.8)",
+                            fontSize: "0.875rem",
+                          }}
+                        >
+                          {renderEditableCell(row, "branch")}
+                        </td>
+                        <td
+                          style={{
+                            padding: "1rem",
+                            color: "rgba(255, 255, 255, 0.8)",
+                            fontSize: "0.875rem",
+                          }}
+                        >
+                          {renderEditableCell(row, "timeOffType")}
+                        </td>
+                        <td
+                          style={{
+                            padding: "1rem",
+                            color: "rgba(255, 255, 255, 0.8)",
+                            fontSize: "0.875rem",
+                          }}
+                        >
+                          {renderEditableCell(row, "purpose")}
+                        </td>
+                        <td
+                          style={{
+                            padding: "1rem",
+                            color: "rgba(255, 255, 255, 0.8)",
+                            fontSize: "0.875rem",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {renderEditableCell(row, "startDate")}
+                        </td>
+                        <td
+                          style={{
+                            padding: "1rem",
+                            color: "rgba(255, 255, 255, 0.8)",
+                            fontSize: "0.875rem",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {renderEditableCell(row, "endDate")}
+                        </td>
+                        <td
+                          style={{
+                            padding: "1rem",
+                            color: "rgba(255, 255, 255, 0.8)",
+                            fontSize: "0.875rem",
+                            textAlign: "center",
+                          }}
+                        >
+                          {renderEditableCell(row, "numberOfDays")}
+                        </td>
+                        <td
+                          style={{
+                            padding: "1rem",
+                            textAlign: "center",
+                          }}
+                        >
+                          {dirtyRows[rowKey] && (
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await saveCellChange(rowKey, row);
+                                  setDirtyRows((prev) => {
+                                    const copy = { ...prev };
+                                    delete copy[rowKey];
+                                    return copy;
+                                  });
+                                  alert("Changes saved successfully");
+                                } catch {}
+                              }}
+                              style={{
+                                background: "rgba(34, 197, 94, 0.15)",
+                                color: "#22c55e",
+                                border: "none",
+                                borderRadius: "8px",
+                                padding: "0.5rem 0.75rem",
+                                fontSize: "0.8125rem",
+                                cursor: "pointer",
+                                marginRight: "0.5rem",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "0.375rem",
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = "#22c55e";
+                                e.currentTarget.style.color = "#FFFFFF";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background =
+                                  "rgba(34, 197, 94, 0.15)";
+                                e.currentTarget.style.color = "#22c55e";
+                              }}
+                            >
+                              <i
+                                className="fas fa-save"
+                                style={{ fontSize: "0.75rem" }}
+                              ></i>
+                              Save
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDelete(rowKey)}
+                            style={{
+                              background: "rgba(239, 68, 68, 0.15)",
+                              color: "#ef4444",
+                              border: "none",
+                              borderRadius: "8px",
+                              padding: "0.5rem 0.75rem",
+                              fontSize: "0.8125rem",
+                              cursor: "pointer",
+                              transition: "all 0.2s",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "0.375rem",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = "#ef4444";
+                              e.currentTarget.style.color = "#FFFFFF";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background =
+                                "rgba(239, 68, 68, 0.15)";
+                              e.currentTarget.style.color = "#ef4444";
+                            }}
+                          >
+                            <i
+                              className="fas fa-trash"
+                              style={{ fontSize: "0.75rem" }}
+                            ></i>
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             )}

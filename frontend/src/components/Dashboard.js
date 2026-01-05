@@ -37,6 +37,7 @@ const Dashboard = () => {
   }, [axiosPrivate]);
 
   const [weekSchedule, setWeekSchedule] = useState([]);
+  const [weekOffset, setWeekOffset] = useState(0);
   const [teamWFH, setTeamWFH] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showCustomModal, setShowCustomModal] = useState(false);
@@ -54,18 +55,24 @@ const Dashboard = () => {
   });
 
   // Get current week days (Saturday to Friday, Egypt week)
-  const getCurrentWeek = () => {
-    const today = new Date();
+  const getCurrentWeek = (offset = 0) => {
+    // تاريخ النهارده الحقيقي
+    const realToday = new Date();
+    realToday.setHours(0, 0, 0, 0);
+
+    // اليوم الأساسي للحساب (ممكن يكون أسبوع فات أو جاي)
+    const baseDate = new Date(realToday);
+    baseDate.setDate(baseDate.getDate() + offset * 7);
 
     // JS: 0 = Sunday ... 6 = Saturday
-    const dayOfWeek = today.getDay();
+    const dayOfWeek = baseDate.getDay();
 
     // Egypt week starts on Saturday
     // نحسب عدد الأيام اللي نرجعها لحد السبت الحالي
     const diffToSaturday = (dayOfWeek + 1) % 7;
 
-    const saturday = new Date(today);
-    saturday.setDate(today.getDate() - diffToSaturday);
+    const saturday = new Date(baseDate);
+    saturday.setDate(baseDate.getDate() - diffToSaturday);
 
     const week = [];
     for (let i = 0; i < 7; i++) {
@@ -76,14 +83,14 @@ const Dashboard = () => {
         date: day.toISOString().split("T")[0],
         dayName: day.toLocaleDateString("en-US", { weekday: "short" }),
         dayNumber: day.getDate(),
-        isToday: day.toDateString() === today.toDateString(),
+        isToday: day.toDateString() === realToday.toDateString(),
       });
     }
 
     return week;
   };
 
-  const currentWeek = getCurrentWeek();
+  const currentWeek = getCurrentWeek(weekOffset);
 
   // Fetch WFH schedule for current week
   useEffect(() => {
@@ -134,7 +141,15 @@ const Dashboard = () => {
   }, [axiosPrivate]);
 
   const isWFHDay = (date) => {
-    const schedule = weekSchedule.find((schedule) => schedule.date === date);
+    const targetDate = new Date(date);
+    targetDate.setHours(0, 0, 0, 0);
+
+    const schedule = weekSchedule.find((schedule) => {
+      const scheduleDate = new Date(schedule.date);
+      scheduleDate.setHours(0, 0, 0, 0);
+      return scheduleDate.getTime() === targetDate.getTime();
+    });
+
     return schedule
       ? { hasRequest: true, type: schedule.type }
       : { hasRequest: false, type: null };
@@ -430,123 +445,233 @@ const Dashboard = () => {
           animationFillMode: "both",
         }}
       >
-        <h2
+        <div
           style={{
-            fontSize: "1.125rem",
-            fontWeight: "600",
-            color: "#FFFFFF",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
             marginBottom: "1.75rem",
-            letterSpacing: "-0.01em",
           }}
         >
-          My Schedule — Current Week
-        </h2>
+          <div>
+            <h2
+              style={{
+                fontSize: "1.125rem",
+                fontWeight: "600",
+                color: "#FFFFFF",
+                letterSpacing: "-0.01em",
+                marginBottom: "0.25rem",
+              }}
+            >
+              My Schedule
+            </h2>
+
+            <div
+              style={{
+                fontSize: "0.75rem",
+                color: "rgba(255, 255, 255, 0.5)",
+                fontWeight: "500",
+              }}
+            >
+              {new Date(currentWeek[0].date).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}{" "}
+              →{" "}
+              {new Date(currentWeek[6].date).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </div>
+          </div>
+
+          <button
+            onClick={() => setWeekOffset(0)}
+            disabled={weekOffset === 0}
+            style={{
+              background:
+                weekOffset === 0
+                  ? "rgba(255, 255, 255, 0.04)"
+                  : "linear-gradient(135deg, rgba(234, 131, 3, 0.9), rgba(234, 131, 3, 0.7))",
+              border:
+                weekOffset === 0
+                  ? "1px solid rgba(255, 255, 255, 0.08)"
+                  : "1px solid rgba(234, 131, 3, 0.6)",
+              color:
+                weekOffset === 0
+                  ? "rgba(255, 255, 255, 0.4)"
+                  : "#FFFFFF",
+              borderRadius: "999px",
+              padding: "0.45rem 1rem",
+              fontSize: "0.75rem",
+              fontWeight: "600",
+              cursor: weekOffset === 0 ? "not-allowed" : "pointer",
+              opacity: weekOffset === 0 ? 0.7 : 1,
+              boxShadow:
+                weekOffset === 0
+                  ? "none"
+                  : "0 4px 14px rgba(234, 131, 3, 0.35)",
+              transition: "all 0.25s ease",
+            }}
+          >
+            Current Week
+          </button>
+        </div>
 
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(90px, 1fr))",
-            gap: "1rem",
+            display: "flex",
+            alignItems: "stretch",
+            gap: "0.75rem",
           }}
         >
-          {currentWeek.map((day, index) => {
-            const daySchedule = isWFHDay(day.date);
-            const isFriday = day.dayName === "Fri";
-            const isHighlighted = day.isToday || daySchedule.hasRequest;
+          {/* Previous Week */}
+          <button
+            onClick={() => setWeekOffset((prev) => prev - 1)}
+            style={{
+              background: "rgba(255, 255, 255, 0.06)",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              color: "#FFFFFF",
+              borderRadius: "14px",
+              width: "42px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              fontSize: "1rem",
+            }}
+          >
+            ◀
+          </button>
 
-            return (
-              <div
-                key={index}
-                style={{
-                  background: day.isToday ? "#2A2A2E" : "#1E1E1E",
-                  border: day.isToday
-                    ? "2px solid #EA8303"
-                    : "1px solid rgba(255, 255, 255, 0.08)",
-                  borderRadius: "12px",
-                  padding: "1.25rem 0.75rem",
-                  textAlign: "center",
-                  transition: "all 0.2s ease",
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-              >
+          {/* Days */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(90px, 1fr))",
+              gap: "1rem",
+              flex: 1,
+            }}
+          >
+            {currentWeek.map((day, index) => {
+              const daySchedule = isWFHDay(day.date);
+              const isFriday = day.dayName === "Fri";
+              const isHighlighted = day.isToday || daySchedule.hasRequest;
+
+              return (
                 <div
+                  key={index}
                   style={{
-                    fontSize: "0.6875rem",
-                    fontWeight: "600",
-                    color: day.isToday ? "#EA8303" : "rgba(255, 255, 255, 0.5)",
-                    marginBottom: "0.625rem",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
+                    background: day.isToday ? "#2A2A2E" : "#1E1E1E",
+                    border: day.isToday
+                      ? "2px solid #EA8303"
+                      : "1px solid rgba(255, 255, 255, 0.08)",
+                    borderRadius: "12px",
+                    padding: "1.25rem 0.75rem",
+                    textAlign: "center",
+                    transition: "all 0.2s ease",
+                    position: "relative",
+                    overflow: "hidden",
                   }}
                 >
-                  {day.dayName}
-                </div>
-                <div
-                  style={{
-                    fontSize: "1.75rem",
-                    fontWeight: "600",
-                    color: day.isToday ? "#EA8303" : "#FFFFFF",
-                    marginBottom: "0.75rem",
-                    lineHeight: "1",
-                  }}
-                >
-                  {day.dayNumber}
-                </div>
-                {isFriday ? (
-                  <div
-                    style={{
-                      fontSize: "0.625rem",
-                      fontWeight: "500",
-                      color: "rgba(255, 255, 255, 0.4)",
-                      background: "rgba(255, 255, 255, 0.05)",
-                      padding: "0.375rem 0.5rem",
-                      borderRadius: "6px",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "0.25rem",
-                    }}
-                  >
-                    <i
-                      className="fas fa-calendar-times"
-                      style={{ fontSize: "0.625rem" }}
-                    ></i>
-                    Holiday
-                  </div>
-                ) : daySchedule.hasRequest ? (
-                  <div
-                    style={{
-                      fontSize: "0.625rem",
-                      fontWeight: "500",
-                      color: "#EA8303",
-                      background: "rgba(234, 131, 3, 0.12)",
-                      padding: "0.375rem 0.5rem",
-                      borderRadius: "6px",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "0.25rem",
-                    }}
-                  >
-                    <i
-                      className="fas fa-home"
-                      style={{ fontSize: "0.625rem" }}
-                    ></i>
-                    {daySchedule.type === "WFH" ? "WFH" : "Leave"}
-                  </div>
-                ) : (
                   <div
                     style={{
                       fontSize: "0.6875rem",
-                      fontWeight: "500",
-                      color: "rgba(255, 255, 255, 0.3)",
+                      fontWeight: "600",
+                      color: day.isToday ? "#EA8303" : "rgba(255, 255, 255, 0.5)",
+                      marginBottom: "0.625rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
                     }}
                   >
-                    Office
+                    {day.dayName}
                   </div>
-                )}
-              </div>
-            );
-          })}
+                  <div
+                    style={{
+                      fontSize: "1.75rem",
+                      fontWeight: "600",
+                      color: day.isToday ? "#EA8303" : "#FFFFFF",
+                      marginBottom: "0.75rem",
+                      lineHeight: "1",
+                    }}
+                  >
+                    {day.dayNumber}
+                  </div>
+                  {isFriday ? (
+                    <div
+                      style={{
+                        fontSize: "0.625rem",
+                        fontWeight: "500",
+                        color: "rgba(255, 255, 255, 0.4)",
+                        background: "rgba(255, 255, 255, 0.05)",
+                        padding: "0.375rem 0.5rem",
+                        borderRadius: "6px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.25rem",
+                      }}
+                    >
+                      <i
+                        className="fas fa-calendar-times"
+                        style={{ fontSize: "0.625rem" }}
+                      ></i>
+                      Holiday
+                    </div>
+                  ) : daySchedule.hasRequest ? (
+                    <div
+                      style={{
+                        fontSize: "0.625rem",
+                        fontWeight: "500",
+                        color: "#EA8303",
+                        background: "rgba(234, 131, 3, 0.12)",
+                        padding: "0.375rem 0.5rem",
+                        borderRadius: "6px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.25rem",
+                      }}
+                    >
+                      <i
+                        className="fas fa-home"
+                        style={{ fontSize: "0.625rem" }}
+                      ></i>
+                      {daySchedule.type === "WFH" ? "WFH" : "Leave"}
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        fontSize: "0.6875rem",
+                        fontWeight: "500",
+                        color: "rgba(255, 255, 255, 0.3)",
+                      }}
+                    >
+                      Office
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Next Week */}
+          <button
+            onClick={() => setWeekOffset((prev) => prev + 1)}
+            style={{
+              background: "rgba(255, 255, 255, 0.06)",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              color: "#FFFFFF",
+              borderRadius: "14px",
+              width: "42px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              fontSize: "1rem",
+            }}
+          >
+            ▶
+          </button>
         </div>
       </div>
 
