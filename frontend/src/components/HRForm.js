@@ -980,80 +980,103 @@ const HRForm = () => {
                             textAlign: "center",
                           }}
                         >
-                          {dirtyRows[rowKey] && (
-                            <button
-                              onClick={async () => {
-                                try {
-                                  await saveCellChange(rowKey, row);
-                                  setDirtyRows((prev) => {
-                                    const copy = { ...prev };
-                                    delete copy[rowKey];
-                                    return copy;
-                                  });
-                                  alert("Changes saved successfully");
-                                } catch {}
-                              }}
-                              style={{
-                                background: "rgba(34, 197, 94, 0.15)",
-                                color: "#22c55e",
-                                border: "none",
-                                borderRadius: "8px",
-                                padding: "0.5rem 0.75rem",
-                                fontSize: "0.8125rem",
-                                cursor: "pointer",
-                                marginRight: "0.5rem",
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "0.375rem",
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.background = "#22c55e";
-                                e.currentTarget.style.color = "#FFFFFF";
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.background =
-                                  "rgba(34, 197, 94, 0.15)";
-                                e.currentTarget.style.color = "#22c55e";
-                              }}
-                            >
-                              <i
-                                className="fas fa-save"
-                                style={{ fontSize: "0.75rem" }}
-                              ></i>
-                              Save
-                            </button>
-                          )}
-                          <button
-                            onClick={() => handleDelete(rowKey)}
+                          <div
                             style={{
-                              background: "rgba(239, 68, 68, 0.15)",
-                              color: "#ef4444",
-                              border: "none",
-                              borderRadius: "8px",
-                              padding: "0.5rem 0.75rem",
-                              fontSize: "0.8125rem",
-                              cursor: "pointer",
-                              transition: "all 0.2s",
-                              display: "inline-flex",
+                              position: "relative",
+                              height: "36px",
+                              display: "flex",
                               alignItems: "center",
-                              gap: "0.375rem",
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.background = "#ef4444";
-                              e.currentTarget.style.color = "#FFFFFF";
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.background =
-                                "rgba(239, 68, 68, 0.15)";
-                              e.currentTarget.style.color = "#ef4444";
+                              justifyContent: "center",
                             }}
                           >
-                            <i
-                              className="fas fa-trash"
-                              style={{ fontSize: "0.75rem" }}
-                            ></i>
-                            Delete
-                          </button>
+                            {/* Save Button */}
+                            <div
+                              style={{
+                                position: "absolute",
+                                opacity: dirtyRows[rowKey] ? 1 : 0,
+                                transform: dirtyRows[rowKey]
+                                  ? "scale(1)"
+                                  : "scale(0.9)",
+                                pointerEvents: dirtyRows[rowKey] ? "auto" : "none",
+                                transition: "all 0.25s ease",
+                              }}
+                            >
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    await saveCellChange(rowKey, row);
+                                    setDirtyRows((prev) => {
+                                      const copy = { ...prev };
+                                      delete copy[rowKey];
+                                      return copy;
+                                    });
+                                    alert("Changes saved successfully");
+                                  } catch {}
+                                }}
+                                style={{
+                                  background:
+                                    "linear-gradient(135deg, rgba(34,197,94,0.9) 0%, rgba(22,163,74,0.9) 100%)",
+                                  color: "#FFFFFF",
+                                  border: "none",
+                                  borderRadius: "10px",
+                                  padding: "0.5rem 0.9rem",
+                                  fontSize: "0.8125rem",
+                                  fontWeight: "600",
+                                  cursor: "pointer",
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "0.4rem",
+                                  boxShadow: "0 4px 12px rgba(34,197,94,0.35)",
+                                  transition: "all 0.25s ease",
+                                }}
+                              >
+                                <i className="fas fa-save" style={{ fontSize: "0.75rem" }}></i>
+                                Save
+                              </button>
+                            </div>
+
+                            {/* Delete Button */}
+                            <div
+                              style={{
+                                position: "absolute",
+                                opacity: dirtyRows[rowKey] ? 0 : 1,
+                                transform: dirtyRows[rowKey]
+                                  ? "scale(0.9)"
+                                  : "scale(1)",
+                                pointerEvents: dirtyRows[rowKey] ? "none" : "auto",
+                                transition: "all 0.25s ease",
+                              }}
+                            >
+                              <button
+                                onClick={() => handleDelete(rowKey)}
+                                style={{
+                                  background: "rgba(239, 68, 68, 0.15)",
+                                  color: "#ef4444",
+                                  border: "none",
+                                  borderRadius: "8px",
+                                  padding: "0.5rem 0.75rem",
+                                  fontSize: "0.8125rem",
+                                  cursor: "pointer",
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "0.375rem",
+                                  transition: "all 0.2s",
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.background = "#ef4444";
+                                  e.currentTarget.style.color = "#FFFFFF";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.background =
+                                    "rgba(239, 68, 68, 0.15)";
+                                  e.currentTarget.style.color = "#ef4444";
+                                }}
+                              >
+                                <i className="fas fa-trash" style={{ fontSize: "0.75rem" }}></i>
+                                Delete
+                              </button>
+                            </div>
+                          </div>
                         </td>
                       </tr>
                     );
