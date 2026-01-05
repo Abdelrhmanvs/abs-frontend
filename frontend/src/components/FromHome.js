@@ -576,9 +576,7 @@ const AddFromHome = () => {
             <span style={{ marginLeft: "0.5rem" }}>
               {weekRange.start &&
                 new Date(weekRange.start).toLocaleDateString()}{" "}
-              -{" "}
-              {weekRange.end &&
-                new Date(weekRange.end).toLocaleDateString()}
+              - {weekRange.end && new Date(weekRange.end).toLocaleDateString()}
             </span>
           </div>
         </div>
