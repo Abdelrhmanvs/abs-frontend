@@ -16,6 +16,11 @@ const HRForm = () => {
   const [hrData, setHrData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingCell, setEditingCell] = useState(null);
+  // Sort state
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "asc",
+  });
 
   // Fetch approved requests on mount
   useEffect(() => {
@@ -54,34 +59,57 @@ const HRForm = () => {
     setEditingCell({ rowId, field });
   };
 
+  // Save cell change to backend
+  const saveCellChange = async (rowId, updatedRow) => {
+    try {
+      const payload = {
+        startDate: updatedRow.startDate,
+        endDate: updatedRow.endDate,
+        numberOfDays: updatedRow.numberOfDays,
+        notes: updatedRow.notes,
+        reason: updatedRow.reason,
+      };
+      await axiosPrivate.patch(`/requests/${rowId}`, payload);
+    } catch (error) {
+      console.error("Error saving changes:", error);
+      alert("Failed to save changes");
+    }
+  };
+
+  // Only update local state on change
   const handleCellChange = (rowId, field, value) => {
     setHrData((prevData) =>
-      prevData.map((row) => {
-        if (row.id === rowId) {
-          const updatedRow = { ...row, [field]: value };
-
-          // Auto-recalculate days if dates are changed
-          if (field === "startDate" || field === "endDate") {
-            updatedRow.numberOfDays = calculateDays(
-              updatedRow.startDate,
-              updatedRow.endDate
-            );
-          }
-
-          return updatedRow;
-        }
-        return row;
-      })
+      prevData.map((row) =>
+        row.id === rowId
+          ? {
+              ...row,
+              [field]: value,
+              ...(field === "startDate" || field === "endDate"
+                ? {
+                    numberOfDays: calculateDays(
+                      field === "startDate" ? value : row.startDate,
+                      field === "endDate" ? value : row.endDate
+                    ),
+                  }
+                : {}),
+            }
+          : row
+      )
     );
   };
 
-  const handleCellBlur = () => {
+  // Save to backend on blur
+  const handleCellBlur = (rowId) => {
+    const row = hrData.find((r) => r.id === rowId);
+    if (row) {
+      saveCellChange(rowId, row);
+    }
     setEditingCell(null);
   };
 
   const handleKeyDown = (e, rowId, field) => {
     if (e.key === "Enter") {
-      setEditingCell(null);
+      handleCellBlur(rowId);
     }
   };
 
@@ -153,6 +181,24 @@ const HRForm = () => {
     }
 
     return filtered;
+  };
+
+  // Sorting function (date sort for startDate, endDate only)
+  const getSortedData = (data) => {
+    if (!sortConfig.key) return data;
+
+    // Only sort for startDate and endDate as dates
+    if (sortConfig.key === "startDate" || sortConfig.key === "endDate") {
+      return [...data].sort((a, b) => {
+        const aValue = new Date(a[sortConfig.key]);
+        const bValue = new Date(b[sortConfig.key]);
+        return sortConfig.direction === "asc"
+          ? aValue - bValue
+          : bValue - aValue;
+      });
+    }
+    // Otherwise, do not sort at all (should not happen since sort only allowed on those)
+    return data;
   };
 
   const handleExportToExcel = async () => {
@@ -276,10 +322,24 @@ const HRForm = () => {
     saveAs(blob, `HR_Report_${dateStr}.xlsx`);
   };
 
+  // Non-editable fields in table
+  const NON_EDITABLE_FIELDS = [
+    "code",
+    "fingerprint",
+    "jobPosition",
+    "branch",
+    "employeeName",
+  ];
+
   const renderEditableCell = (row, field) => {
+    const value = row[field] || "";
+
+    if (NON_EDITABLE_FIELDS.includes(field)) {
+      return value || "-";
+    }
+
     const isEditing =
       editingCell?.rowId === row.id && editingCell?.field === field;
-    const value = row[field] || "";
 
     if (isEditing) {
       if (field === "startDate" || field === "endDate") {
@@ -289,7 +349,7 @@ const HRForm = () => {
               type="date"
               value={value}
               onChange={(e) => handleCellChange(row.id, field, e.target.value)}
-              onBlur={handleCellBlur}
+              onBlur={() => handleCellBlur(row.id)}
               onKeyDown={(e) => handleKeyDown(e, row.id, field)}
               autoFocus
               style={{
@@ -315,7 +375,7 @@ const HRForm = () => {
           type="text"
           value={value}
           onChange={(e) => handleCellChange(row.id, field, e.target.value)}
-          onBlur={handleCellBlur}
+          onBlur={() => handleCellBlur(row.id)}
           onKeyDown={(e) => handleKeyDown(e, row.id, field)}
           autoFocus
           style={{
@@ -355,7 +415,22 @@ const HRForm = () => {
     );
   };
 
-  const filteredData = getFilteredData();
+  const filteredData = getSortedData(getFilteredData());
+
+  // Only allow sort on startDate and endDate
+  const handleSort = (key) => {
+    if (key !== "startDate" && key !== "endDate") return;
+
+    setSortConfig((prev) => {
+      if (prev.key === key) {
+        return {
+          key,
+          direction: prev.direction === "asc" ? "desc" : "asc",
+        };
+      }
+      return { key, direction: "asc" };
+    });
+  };
 
   return (
     <div style={{ background: "#2D2D31", minHeight: "100vh", padding: "2rem" }}>
@@ -693,11 +768,17 @@ const HRForm = () => {
                       الغرض من النموذج الإداري
                     </th>
                     <th
+                      onClick={() => handleSort("startDate")}
                       style={{
+                        cursor: "pointer",
                         textAlign: "left",
                         padding: "0.875rem 1rem",
-                        color: "rgba(255, 255, 255, 0.5)",
-                        fontWeight: "500",
+                        color:
+                          sortConfig.key === "startDate"
+                            ? "#EA8303"
+                            : "rgba(255, 255, 255, 0.5)",
+                        fontWeight:
+                          sortConfig.key === "startDate" ? "600" : "500",
                         fontSize: "0.75rem",
                         whiteSpace: "nowrap",
                         textTransform: "uppercase",
@@ -705,13 +786,21 @@ const HRForm = () => {
                       }}
                     >
                       Start Date
+                      {sortConfig.key === "startDate" &&
+                        (sortConfig.direction === "asc" ? " ▲" : " ▼")}
                     </th>
                     <th
+                      onClick={() => handleSort("endDate")}
                       style={{
+                        cursor: "pointer",
                         textAlign: "left",
                         padding: "0.875rem 1rem",
-                        color: "rgba(255, 255, 255, 0.5)",
-                        fontWeight: "500",
+                        color:
+                          sortConfig.key === "endDate"
+                            ? "#EA8303"
+                            : "rgba(255, 255, 255, 0.5)",
+                        fontWeight:
+                          sortConfig.key === "endDate" ? "600" : "500",
                         fontSize: "0.75rem",
                         whiteSpace: "nowrap",
                         textTransform: "uppercase",
@@ -719,6 +808,8 @@ const HRForm = () => {
                       }}
                     >
                       End Date
+                      {sortConfig.key === "endDate" &&
+                        (sortConfig.direction === "asc" ? " ▲" : " ▼")}
                     </th>
                     <th
                       style={{

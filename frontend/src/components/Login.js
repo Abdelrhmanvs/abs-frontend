@@ -22,6 +22,7 @@ const Login = () => {
   const [errMsg, setErrMsg] = useState("");
   const [showWelcome, setShowWelcome] = useState(false);
   const [welcomeUser, setWelcomeUser] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setErrMsg("");
@@ -29,7 +30,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       const response = await axios.post(
         LOGIN_URL,
@@ -52,6 +53,7 @@ const Login = () => {
       // Set auth after a delay and navigate
       setTimeout(() => {
         setAuth({ user: email, roles, accessToken });
+        setLoading(false);
         navigate(from, { replace: true });
       }, 2000);
     } catch (err) {
@@ -64,6 +66,7 @@ const Login = () => {
       } else {
         setErrMsg("Login Failed");
       }
+      setLoading(false);
     }
   };
 
@@ -508,10 +511,12 @@ const Login = () => {
           {/* Login Button */}
           <button
             type="submit"
+            disabled={loading}
             style={{
               width: "100%",
-              background:
-                "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)",
+              background: loading
+                ? "linear-gradient(135deg, rgba(234, 131, 3, 0.5) 0%, rgba(234, 131, 3, 0.3) 100%)"
+                : "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)",
               backdropFilter: "blur(10px)",
               WebkitBackdropFilter: "blur(10px)",
               color: "#FFFFFF",
@@ -520,7 +525,7 @@ const Login = () => {
               padding: "0.875rem 1.5rem",
               fontSize: "0.9375rem",
               fontWeight: "600",
-              cursor: "pointer",
+              cursor: loading ? "not-allowed" : "pointer",
               transition: "all 0.3s ease",
               boxShadow:
                 "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
@@ -528,25 +533,50 @@ const Login = () => {
               alignItems: "center",
               justifyContent: "center",
               gap: "0.5rem",
+              opacity: loading ? 0.7 : 1,
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background =
-                "linear-gradient(135deg, rgba(234, 131, 3, 1) 0%, rgba(234, 131, 3, 0.85) 100%)";
-              e.currentTarget.style.boxShadow =
-                "0 6px 20px rgba(234, 131, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
-              e.currentTarget.style.transform = "translateY(-2px)";
+              if (!loading) {
+                e.currentTarget.style.background =
+                  "linear-gradient(135deg, rgba(234, 131, 3, 1) 0%, rgba(234, 131, 3, 0.85) 100%)";
+                e.currentTarget.style.boxShadow =
+                  "0 6px 20px rgba(234, 131, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background =
-                "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)";
-              e.currentTarget.style.boxShadow =
-                "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
-              e.currentTarget.style.transform = "translateY(0)";
+              if (!loading) {
+                e.currentTarget.style.background =
+                  "linear-gradient(135deg, rgba(234, 131, 3, 0.9) 0%, rgba(234, 131, 3, 0.7) 100%)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 15px rgba(234, 131, 3, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)";
+                e.currentTarget.style.transform = "translateY(0)";
+              }
             }}
           >
-            <i className="fas fa-sign-in-alt"></i>
-            Sign In
+            {loading ? (
+              <span
+                className="spinner"
+                style={{
+                  width: "1.2em",
+                  height: "1.2em",
+                  border: "2px solid #fff",
+                  borderTop: "2px solid #ea8303",
+                  borderRadius: "50%",
+                  animation: "spin 0.8s linear infinite",
+                }}
+              />
+            ) : (
+              <i className="fas fa-sign-in-alt"></i>
+            )}
+            {loading ? "Signing In..." : "Sign In"}
           </button>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
         </form>
 
         {/* Footer */}

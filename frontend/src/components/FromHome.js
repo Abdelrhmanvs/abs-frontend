@@ -3,6 +3,24 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
+// Egypt week helper: sort days from Saturday → Friday (LOCAL date, no timezone shift)
+const sortEgyptWeekDays = (weekDays) => {
+  return [...weekDays].sort((a, b) => {
+    const getDayIndex = (d) => {
+      // Parse YYYY-MM-DD as LOCAL date
+      const [y, m, dayNum] = d.date.split("-").map(Number);
+      const localDate = new Date(y, m - 1, dayNum);
+
+      // JS: 0 = Sunday ... 6 = Saturday
+      const jsDay = localDate.getDay();
+
+      // Egypt week mapping
+      return jsDay === 6 ? 0 : jsDay + 1;
+    };
+    return getDayIndex(a) - getDayIndex(b);
+  });
+};
+
 const AddFromHome = () => {
   const navigate = useNavigate();
   const { auth } = useAuth();
@@ -27,6 +45,7 @@ const AddFromHome = () => {
   const [wfhLoading, setWfhLoading] = useState(true);
   const [weekRange, setWeekRange] = useState({ start: "", end: "" });
   const [weekDays, setWeekDays] = useState([]);
+  const [weekOffset, setWeekOffset] = useState(0); // 0 = current week, 1 = next week
   const dropdownRef = useRef(null);
 
   // Random tab state
@@ -61,15 +80,20 @@ const AddFromHome = () => {
     fetchEmployees();
   }, [axiosPrivate]);
 
-  // Fetch WFH requests for current week
+  // Fetch WFH requests for current week or offset
   useEffect(() => {
     const fetchWFHRequests = async () => {
       try {
         setWfhLoading(true);
-        const response = await axiosPrivate.get("/requests/weekly-wfh");
+        const response = await axiosPrivate.get(
+          `/requests/weekly-wfh?offset=${weekOffset}`
+        );
+
+        console.log("BACKEND weekDays:", response.data.weekDays);
+        console.log("BACKEND weekRange:", response.data.weekRange);
 
         setWeekRange(response.data.weekRange);
-        setWeekDays(response.data.weekDays);
+        setWeekDays(sortEgyptWeekDays(response.data.weekDays));
         setWfhRequests(response.data.employees);
       } catch (error) {
         console.error("Error fetching WFH requests:", error);
@@ -80,7 +104,7 @@ const AddFromHome = () => {
     };
 
     fetchWFHRequests();
-  }, [axiosPrivate]);
+  }, [axiosPrivate, weekOffset]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -212,7 +236,7 @@ const AddFromHome = () => {
       // Refresh WFH weekly schedule
       const wfhResponse = await axiosPrivate.get("/requests/weekly-wfh");
       setWeekRange(wfhResponse.data.weekRange);
-      setWeekDays(wfhResponse.data.weekDays);
+      setWeekDays(sortEgyptWeekDays(wfhResponse.data.weekDays));
       setWfhRequests(wfhResponse.data.employees);
 
       // Reset form
@@ -295,7 +319,7 @@ const AddFromHome = () => {
       // Refresh WFH weekly schedule
       const wfhResponse = await axiosPrivate.get("/requests/weekly-wfh");
       setWeekRange(wfhResponse.data.weekRange);
-      setWeekDays(wfhResponse.data.weekDays);
+      setWeekDays(sortEgyptWeekDays(wfhResponse.data.weekDays));
       setWfhRequests(wfhResponse.data.employees);
 
       // Reset random tab
@@ -439,6 +463,126 @@ const AddFromHome = () => {
           </button>
         </div>
 
+        {/* Week Range Display with Previous/Next Week buttons */}
+        <div
+          style={{
+            padding: "1rem 1.5rem",
+            background: "rgba(255, 255, 255, 0.02)",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <p
+            style={{
+              color: "rgba(255, 255, 255, 0.7)",
+              fontSize: "0.8125rem",
+              margin: 0,
+            }}
+          >
+            {wfhRequests.length} employee
+            {wfhRequests.length !== 1 ? "s" : ""} with WFH
+          </p>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.75rem",
+              color: "rgba(255, 255, 255, 0.7)",
+              fontSize: "0.8125rem",
+            }}
+          >
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              {/* Previous Week */}
+              <button
+                disabled={weekOffset === 0}
+                onClick={() => setWeekOffset((prev) => Math.max(prev - 1, 0))}
+                style={{
+                  background:
+                    weekOffset === 0
+                      ? "rgba(255,255,255,0.05)"
+                      : "rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  color: weekOffset === 0 ? "rgba(255,255,255,0.3)" : "#fff",
+                  padding: "0.35rem 0.8rem",
+                  borderRadius: "8px",
+                  cursor: weekOffset === 0 ? "not-allowed" : "pointer",
+                  fontWeight: "600",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                ← Previous
+              </button>
+
+              {/* Current Week */}
+              <button
+                disabled={weekOffset === 0}
+                onClick={() => setWeekOffset(0)}
+                style={{
+                  background:
+                    weekOffset === 0
+                      ? "rgba(234,131,3,0.25)"
+                      : "rgba(234,131,3,0.15)",
+                  border: "1px solid rgba(234,131,3,0.45)",
+                  color: weekOffset === 0 ? "#EA8303" : "#EA8303",
+                  padding: "0.35rem 0.9rem",
+                  borderRadius: "8px",
+                  cursor: weekOffset === 0 ? "default" : "pointer",
+                  fontWeight: "700",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  if (weekOffset !== 0) {
+                    e.currentTarget.style.background = "rgba(234,131,3,0.3)";
+                    e.currentTarget.style.transform = "translateY(-1px)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (weekOffset !== 0) {
+                    e.currentTarget.style.background = "rgba(234,131,3,0.15)";
+                    e.currentTarget.style.transform = "translateY(0)";
+                  }
+                }}
+              >
+                Current Week
+              </button>
+
+              {/* Next Week */}
+              <button
+                onClick={() => setWeekOffset((prev) => prev + 1)}
+                style={{
+                  background: "rgba(234,131,3,0.15)",
+                  border: "1px solid rgba(234,131,3,0.4)",
+                  color: "#EA8303",
+                  padding: "0.35rem 0.8rem",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  fontWeight: "600",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(234,131,3,0.3)";
+                  e.currentTarget.style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(234,131,3,0.15)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
+              >
+                Next →
+              </button>
+            </div>
+            <span style={{ marginLeft: "0.5rem" }}>
+              {weekRange.start &&
+                new Date(weekRange.start).toLocaleDateString()}{" "}
+              -{" "}
+              {weekRange.end &&
+                new Date(weekRange.end).toLocaleDateString()}
+            </span>
+          </div>
+        </div>
+
         {wfhLoading ? (
           <div
             style={{
@@ -474,47 +618,6 @@ const AddFromHome = () => {
           </div>
         ) : (
           <>
-            {/* Week Range Display */}
-            <div
-              style={{
-                padding: "1rem 1.5rem",
-                background: "rgba(255, 255, 255, 0.02)",
-                borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <p
-                style={{
-                  color: "rgba(255, 255, 255, 0.7)",
-                  fontSize: "0.8125rem",
-                  margin: 0,
-                }}
-              >
-                {wfhRequests.length} employee
-                {wfhRequests.length !== 1 ? "s" : ""} with WFH this week
-              </p>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  color: "rgba(255, 255, 255, 0.7)",
-                  fontSize: "0.8125rem",
-                }}
-              >
-                <i
-                  className="fas fa-calendar-week"
-                  style={{ color: "#EA8303" }}
-                ></i>
-                {weekRange.start &&
-                  new Date(weekRange.start).toLocaleDateString()}{" "}
-                -{" "}
-                {weekRange.end && new Date(weekRange.end).toLocaleDateString()}
-              </div>
-            </div>
-
             {/* Weekly Schedule Grid */}
             <div style={{ overflowX: "auto" }}>
               <table
@@ -576,7 +679,10 @@ const AddFromHome = () => {
                               marginTop: "0.25rem",
                             }}
                           >
-                            {new Date(day.date).getDate()}
+                            {(() => {
+                              const [y, m, d] = day.date.split("-").map(Number);
+                              return new Date(y, m - 1, d).getDate();
+                            })()}
                           </div>
                           {isFriday && (
                             <div
@@ -643,8 +749,10 @@ const AddFromHome = () => {
                         )}
                       </td>
                       {employee.weekSchedule.map((daySchedule) => {
-                        const isFriday =
-                          new Date(daySchedule.date).getDay() === 5;
+                        const [y, m, d] = daySchedule.date
+                          .split("-")
+                          .map(Number);
+                        const isFriday = new Date(y, m - 1, d).getDay() === 5;
                         return (
                           <td
                             key={daySchedule.date}

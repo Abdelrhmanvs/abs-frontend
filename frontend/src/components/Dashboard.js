@@ -53,17 +53,25 @@ const Dashboard = () => {
     endDate: "",
   });
 
-  // Get current week days (Sunday to Saturday)
+  // Get current week days (Saturday to Friday, Egypt week)
   const getCurrentWeek = () => {
     const today = new Date();
+
+    // JS: 0 = Sunday ... 6 = Saturday
     const dayOfWeek = today.getDay();
-    const sunday = new Date(today);
-    sunday.setDate(today.getDate() - dayOfWeek);
+
+    // Egypt week starts on Saturday
+    // نحسب عدد الأيام اللي نرجعها لحد السبت الحالي
+    const diffToSaturday = (dayOfWeek + 1) % 7;
+
+    const saturday = new Date(today);
+    saturday.setDate(today.getDate() - diffToSaturday);
 
     const week = [];
     for (let i = 0; i < 7; i++) {
-      const day = new Date(sunday);
-      day.setDate(sunday.getDate() + i);
+      const day = new Date(saturday);
+      day.setDate(saturday.getDate() + i);
+
       week.push({
         date: day.toISOString().split("T")[0],
         dayName: day.toLocaleDateString("en-US", { weekday: "short" }),
@@ -71,6 +79,7 @@ const Dashboard = () => {
         isToday: day.toDateString() === today.toDateString(),
       });
     }
+
     return week;
   };
 
