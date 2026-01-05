@@ -15,7 +15,10 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchRecentRequests = async () => {
       try {
-        const response = await axiosPrivate.get("/requests/my?limit=5");
+        const endpoint = auth?.roles?.includes("admin")
+          ? "/requests?limit=5"
+          : "/requests/my?limit=5";
+        const response = await axiosPrivate.get(endpoint);
         const formattedRequests = response.data.map((req) => ({
           id: req._id,
           type: req.type,
@@ -34,7 +37,7 @@ const Dashboard = () => {
     };
 
     fetchRecentRequests();
-  }, [axiosPrivate]);
+  }, [axiosPrivate, auth?.roles]);
 
   const [weekSchedule, setWeekSchedule] = useState([]);
   const [weekOffset, setWeekOffset] = useState(0);
