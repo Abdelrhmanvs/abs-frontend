@@ -82,8 +82,13 @@ const Dashboard = () => {
       const day = new Date(saturday);
       day.setDate(saturday.getDate() + i);
 
+      const localDate = new Date(
+        day.getFullYear(),
+        day.getMonth(),
+        day.getDate()
+      );
       week.push({
-        date: day.toISOString().split("T")[0],
+        date: localDate.toLocaleDateString("en-CA"),
         dayName: day.toLocaleDateString("en-US", { weekday: "short" }),
         dayNumber: day.getDate(),
         isToday: day.toDateString() === realToday.toDateString(),
@@ -116,7 +121,7 @@ const Dashboard = () => {
       try {
         const response = await axiosPrivate.get("/requests/weekly-wfh");
         // Filter for today only
-        const today = new Date().toISOString().split("T")[0];
+        const today = new Date().toLocaleDateString("en-CA");
         const todayWFH = [];
 
         response.data.employees.forEach((employee) => {
@@ -126,7 +131,7 @@ const Dashboard = () => {
           if (todaySchedule) {
             todayWFH.push({
               name: employee.employeeName,
-              code: employee.employeeCode,
+              fingerprint: employee.fingerprint,
               type: todaySchedule.type,
             });
           }
@@ -144,12 +149,18 @@ const Dashboard = () => {
   }, [axiosPrivate]);
 
   const isWFHDay = (date) => {
-    const targetDate = new Date(date);
-    targetDate.setHours(0, 0, 0, 0);
+    const targetDate = new Date(
+      new Date(date).getFullYear(),
+      new Date(date).getMonth(),
+      new Date(date).getDate()
+    );
 
     const schedule = weekSchedule.find((schedule) => {
-      const scheduleDate = new Date(schedule.date);
-      scheduleDate.setHours(0, 0, 0, 0);
+      const scheduleDate = new Date(
+        new Date(schedule.date).getFullYear(),
+        new Date(schedule.date).getMonth(),
+        new Date(schedule.date).getDate()
+      );
       return scheduleDate.getTime() === targetDate.getTime();
     });
 
@@ -501,10 +512,7 @@ const Dashboard = () => {
                 weekOffset === 0
                   ? "1px solid rgba(255, 255, 255, 0.08)"
                   : "1px solid rgba(234, 131, 3, 0.6)",
-              color:
-                weekOffset === 0
-                  ? "rgba(255, 255, 255, 0.4)"
-                  : "#FFFFFF",
+              color: weekOffset === 0 ? "rgba(255, 255, 255, 0.4)" : "#FFFFFF",
               borderRadius: "999px",
               padding: "0.45rem 1rem",
               fontSize: "0.75rem",
@@ -582,7 +590,9 @@ const Dashboard = () => {
                     style={{
                       fontSize: "0.6875rem",
                       fontWeight: "600",
-                      color: day.isToday ? "#EA8303" : "rgba(255, 255, 255, 0.5)",
+                      color: day.isToday
+                        ? "#EA8303"
+                        : "rgba(255, 255, 255, 0.5)",
                       marginBottom: "0.625rem",
                       textTransform: "uppercase",
                       letterSpacing: "0.5px",
@@ -777,7 +787,7 @@ const Dashboard = () => {
                         fontWeight: "400",
                       }}
                     >
-                      {employee.code}
+                      {employee.fingerprint}
                     </div>
                   </div>
                   <div
@@ -1507,7 +1517,11 @@ const Dashboard = () => {
                     </option>
                     {employees.map((emp) => (
                       <option key={emp._id} value={emp._id}>
-                        {emp.fullName} ({emp.employeeCode})
+                        {emp.fullName} (
+                        {emp.fingerprint ||
+                          emp.fingerprintCode ||
+                          emp.employeeCode}
+                        )
                       </option>
                     ))}
                   </select>

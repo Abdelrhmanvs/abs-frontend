@@ -735,14 +735,14 @@ const AddFromHome = () => {
                         }
                       >
                         <div>{employee.employeeName}</div>
-                        {employee.employeeCode && (
+                        {employee.fingerprint && (
                           <div
                             style={{
                               fontSize: "0.75rem",
                               color: "rgba(255, 255, 255, 0.5)",
                             }}
                           >
-                            {employee.employeeCode}
+                            {employee.fingerprint}
                           </div>
                         )}
                       </td>
