@@ -567,7 +567,7 @@ const Dashboard = () => {
           >
             {currentWeek.map((day, index) => {
               const daySchedule = isWFHDay(day.date);
-              const isFriday = day.dayName === "Fri";
+              const isHoliday = day.dayName === "Fri" || day.dayName === "Sat";
               const isHighlighted = day.isToday || daySchedule.hasRequest;
 
               return (
@@ -611,7 +611,7 @@ const Dashboard = () => {
                   >
                     {day.dayNumber}
                   </div>
-                  {isFriday ? (
+                  {isHoliday ? (
                     <div
                       style={{
                         fontSize: "0.625rem",

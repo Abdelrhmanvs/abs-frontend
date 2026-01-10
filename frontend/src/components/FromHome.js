@@ -50,6 +50,8 @@ const AddFromHome = () => {
 
   // Random tab state
   const [activeTab, setActiveTab] = useState("manual"); // "manual" or "random"
+  // Week selection for random tab
+  const [randomWeekOffset, setRandomWeekOffset] = useState(0); // 0 = current, 1 = next
   const [selectedEmployees, setSelectedEmployees] = useState([]);
   const [daysPerEmployee, setDaysPerEmployee] = useState(1);
   const [randomPreview, setRandomPreview] = useState([]);
@@ -291,14 +293,26 @@ const AddFromHome = () => {
     }
   };
 
+  // Helper: get non-holiday days for the selected week
+  const getNonHolidayDates = () => {
+    // Use weekDays for the selected randomWeekOffset
+    // If weekDays is not for the selected week, fetch it (sync fetch for UI is not ideal, but for now, use current weekDays)
+    return weekDays
+      .filter((day) => {
+        // day.dayShort: "Sat", "Sun", ... "Fri"
+        return day.dayShort !== "Fri" && day.dayShort !== "Sat";
+      })
+      .map((day) => day.date);
+  };
+
   const handleGenerateRandomWFH = async () => {
     if (selectedEmployees.length === 0) {
       setError("Please select at least one employee");
       return;
     }
 
-    if (daysPerEmployee < 1 || daysPerEmployee > 7) {
-      setError("Days per employee must be between 1 and 7");
+    if (daysPerEmployee < 1 || daysPerEmployee > 5) {
+      setError("Days per employee must be between 1 and 5");
       return;
     }
 
@@ -306,9 +320,20 @@ const AddFromHome = () => {
     setError("");
 
     try {
+      // Only allow assignment on non-holiday days
+      const allowedDates = getNonHolidayDates();
+      if (allowedDates.length === 0) {
+        setError(
+          "No available working days in the selected week (all are holidays)"
+        );
+        setRandomLoading(false);
+        return;
+      }
       const response = await axiosPrivate.post("/requests/random-wfh", {
         selectedEmployeeIds: selectedEmployees,
         numberOfDaysPerEmployee: daysPerEmployee,
+        weekOffset: randomWeekOffset,
+        allowedDates,
       });
 
       setSuccess(
@@ -317,7 +342,9 @@ const AddFromHome = () => {
       setShowModal(false);
 
       // Refresh WFH weekly schedule
-      const wfhResponse = await axiosPrivate.get("/requests/weekly-wfh");
+      const wfhResponse = await axiosPrivate.get(
+        `/requests/weekly-wfh?offset=${randomWeekOffset}`
+      );
       setWeekRange(wfhResponse.data.weekRange);
       setWeekDays(sortEgyptWeekDays(wfhResponse.data.weekDays));
       setWfhRequests(wfhResponse.data.employees);
@@ -646,14 +673,15 @@ const AddFromHome = () => {
                       Employee
                     </th>
                     {weekDays.map((day) => {
-                      const isFriday = day.dayShort === "Fri";
+                      const isHoliday =
+                        day.dayShort === "Fri" || day.dayShort === "Sat";
                       return (
                         <th
                           key={day.date}
                           style={{
                             padding: "1rem",
                             textAlign: "center",
-                            color: isFriday
+                            color: isHoliday
                               ? "#ef4444"
                               : "rgba(255, 255, 255, 0.5)",
                             fontWeight: "600",
@@ -661,7 +689,7 @@ const AddFromHome = () => {
                             textTransform: "uppercase",
                             letterSpacing: "0.05em",
                             minWidth: "100px",
-                            background: isFriday
+                            background: isHoliday
                               ? "rgba(239, 68, 68, 0.1)"
                               : "transparent",
                           }}
@@ -670,7 +698,7 @@ const AddFromHome = () => {
                           <div
                             style={{
                               fontSize: "0.875rem",
-                              color: isFriday
+                              color: isHoliday
                                 ? "#ef4444"
                                 : "rgba(255, 255, 255, 0.7)",
                               fontWeight: "500",
@@ -682,7 +710,7 @@ const AddFromHome = () => {
                               return new Date(y, m - 1, d).getDate();
                             })()}
                           </div>
-                          {isFriday && (
+                          {isHoliday && (
                             <div
                               style={{
                                 fontSize: "0.625rem",
@@ -750,7 +778,9 @@ const AddFromHome = () => {
                         const [y, m, d] = daySchedule.date
                           .split("-")
                           .map(Number);
-                        const isFriday = new Date(y, m - 1, d).getDay() === 5;
+                        const isHoliday = [5, 6].includes(
+                          new Date(y, m - 1, d).getDay()
+                        );
                         return (
                           <td
                             key={daySchedule.date}
@@ -758,12 +788,12 @@ const AddFromHome = () => {
                               padding: "1rem",
                               textAlign: "center",
                               fontSize: "0.875rem",
-                              background: isFriday
+                              background: isHoliday
                                 ? "rgba(239, 68, 68, 0.05)"
                                 : "transparent",
                             }}
                           >
-                            {isFriday ? (
+                            {isHoliday ? (
                               <div
                                 style={{
                                   color: "#ef4444",
@@ -1481,6 +1511,51 @@ const AddFromHome = () => {
               {/* Random Tab Content */}
               {activeTab === "random" && (
                 <div>
+                  {/* Week Selector for Random Tab */}
+                  <div style={{ marginBottom: "1.25rem" }}>
+                    <label
+                      htmlFor="randomWeekOffset"
+                      style={{
+                        display: "block",
+                        color: "rgba(255, 255, 255, 0.7)",
+                        fontSize: "0.8125rem",
+                        fontWeight: "500",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      Choose Week
+                    </label>
+                    <select
+                      id="randomWeekOffset"
+                      value={randomWeekOffset}
+                      onChange={(e) =>
+                        setRandomWeekOffset(Number(e.target.value))
+                      }
+                      style={{
+                        width: "100%",
+                        background: "rgba(255, 255, 255, 0.04)",
+                        color: "#FFFFFF",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                        borderRadius: "10px",
+                        padding: "0.75rem 1rem",
+                        fontSize: "0.875rem",
+                        outline: "none",
+                        transition: "all 0.2s",
+                        marginBottom: "0.5rem",
+                      }}
+                    >
+                      <option value={0}>Current Week</option>
+                      <option value={1}>Next Week</option>
+                    </select>
+                    <p
+                      style={{
+                        color: "rgba(255, 255, 255, 0.5)",
+                        fontSize: "0.75rem",
+                      }}
+                    >
+                      This will assign WFH for the selected week
+                    </p>
+                  </div>
                   {/* Number of Days Input */}
                   <div style={{ marginBottom: "1.25rem" }}>
                     <label
@@ -1493,16 +1568,21 @@ const AddFromHome = () => {
                         marginBottom: "0.5rem",
                       }}
                     >
-                      Number of WFH days per employee (1-7)
+                      Number of WFH days per employee (1-5)
                     </label>
                     <input
                       type="number"
                       id="daysPerEmployee"
                       min="1"
-                      max="7"
+                      max="5"
                       value={daysPerEmployee}
                       onChange={(e) =>
-                        setDaysPerEmployee(parseInt(e.target.value))
+                        setDaysPerEmployee(
+                          Math.max(
+                            1,
+                            Math.min(5, parseInt(e.target.value) || 1)
+                          )
+                        )
                       }
                       style={{
                         width: "100%",
